@@ -1,6 +1,7 @@
 package de.karina.todolist;
 
 import android.content.Intent;
+import androidx.room.Room;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,21 +15,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.impl.room.TodoItemDatabase;
 
+import java.io.DataInput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
 
-    public static final String LOG_TAG = OverviewActivity.class.getSimpleName();
-
     private TodoDataSource dataSource;
     private FloatingActionButton addItemButton;
     private ArrayAdapter<TodoItem> todoListArrayAdapter;
     private ViewGroup todoList;
+    
+    private TodoItemDatabase db;
 
-    private List<TodoItem> tasks = new ArrayList<>(Arrays.asList(new TodoItem[]{new TodoItem("Task 1"),new TodoItem("Task 2")}));
+    private List<TodoItem> tasks = new ArrayList<>(); //(Arrays.asList(new TodoItem[]{new TodoItem("Task 1", "Desc1"),new TodoItem("Task 2", "Desc2")}));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,6 @@ public class OverviewActivity extends AppCompatActivity {
         });
 
         TodoItem todoItem = new TodoItem(1, "test", "desc", false, false, 3119, 800);
-        Log.d(LOG_TAG, "Inhalt des Items: " + todoItem.toString());
 
         dataSource = new TodoDataSource(this);
 
@@ -63,6 +65,23 @@ public class OverviewActivity extends AppCompatActivity {
                 TodoItem clickedItem = todoListArrayAdapter.getItem(position);
             }
         });
+        
+        db = Room.databaseBuilder(getApplicationContext(), TodoItemDatabase.class, "todoitem-db").build();
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<TodoItem> todoItems = db.getDao().readAll();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (TodoItem todoItem : todoItems) {
+                            addNewItemToList(todoItem);
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     private void createNewItem() {
@@ -74,12 +93,28 @@ public class OverviewActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 0 && resultCode == RESULT_OK) {
             TodoItem todoItem = (TodoItem)data.getSerializableExtra("item");
-            addNewItemToList(todoItem);
+            createItemAndUpdateList(todoItem);
         }
     }
     
-    private void addNewItemToList(TodoItem item) {
-        todoListArrayAdapter.add(item);
+    private void createItemAndUpdateList(TodoItem todoItem) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long id = db.getDao().create(todoItem);
+                todoItem.setId(id);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        addNewItemToList(todoItem);
+                    }
+                });
+            }
+        }).start();
+    }
+    
+    private void addNewItemToList(TodoItem todoItem) {
+        todoListArrayAdapter.add(todoItem);
         
     }
     

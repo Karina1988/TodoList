@@ -1,10 +1,16 @@
 package de.karina.todolist.model;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity
 public class TodoItem implements Serializable {
 
-    private Integer id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     private String title;
     private String description;
     private Boolean done;
@@ -12,6 +18,7 @@ public class TodoItem implements Serializable {
     private Integer dueDate;
     private Integer dueTime;
     
+    @Ignore
     public TodoItem(String title) {
        this.setTitle(title);
     }
@@ -21,6 +28,7 @@ public class TodoItem implements Serializable {
         this.setDescription(description);
     }
     
+    @Ignore
     public TodoItem(Integer id, String title, String description, Boolean done, Boolean favorite, Integer dueDate, Integer dueTime) {
         this.setId(id);
         this.setTitle(title);
@@ -31,11 +39,11 @@ public class TodoItem implements Serializable {
         this.setDueTime(dueTime);
     }
     
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
