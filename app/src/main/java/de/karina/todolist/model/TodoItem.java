@@ -1,25 +1,36 @@
 package de.karina.todolist.model;
 
-public class TodoItem {
+import java.io.Serializable;
 
-    Integer id;
-    String title;
-    String description;
-    Boolean done;
-    Boolean favorite;
-    Integer dueDate;
-    Integer dueTime;
+public class TodoItem implements Serializable {
 
-    public TodoItem(Integer id, String title, String description, Boolean done, Boolean favorite, Integer dueDate, Integer dueTime) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.done = done;
-        this.favorite = favorite;
-        this.dueDate = dueDate;
-        this.dueTime = dueTime;
+    private Integer id;
+    private String title;
+    private String description;
+    private Boolean done;
+    private Boolean favorite;
+    private Integer dueDate;
+    private Integer dueTime;
+    
+    public TodoItem(String title) {
+       this.setTitle(title);
     }
-
+    
+    public TodoItem(String title, String description) {
+        this.setTitle(title);
+        this.setDescription(description);
+    }
+    
+    public TodoItem(Integer id, String title, String description, Boolean done, Boolean favorite, Integer dueDate, Integer dueTime) {
+        this.setId(id);
+        this.setTitle(title);
+        this.setDescription(description);
+        this.setDone(done);
+        this.setFavorite(favorite);
+        this.setDueDate(dueDate);
+        this.setDueTime(dueTime);
+    }
+    
     public Integer getId() {
         return id;
     }
