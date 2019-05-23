@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
 import de.karina.todolist.model.impl.room.TodoItemDatabase;
 
@@ -29,8 +30,8 @@ public class OverviewActivity extends AppCompatActivity {
     private ArrayAdapter<TodoItem> todoListArrayAdapter;
     private ViewGroup todoList;
     
-    private TodoItemDatabase db;
-
+    private ITodoItemCRUDOperations crudOperations;
+    
     private List<TodoItem> tasks = new ArrayList<>(); //(Arrays.asList(new TodoItem[]{new TodoItem("Task 1", "Desc1"),new TodoItem("Task 2", "Desc2")}));
 
     @Override
@@ -66,17 +67,17 @@ public class OverviewActivity extends AppCompatActivity {
             }
         });
         
-        db = Room.databaseBuilder(getApplicationContext(), TodoItemDatabase.class, "todoitem-db").build();
+        this.crudOperations = ((TodoItemApplication)getApplication()).getCrudOperations();
         
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<TodoItem> todoItems = db.getDao().readAll();
+                List<TodoItem> todoItems = crudOperations.readAllItems();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        for (TodoItem todoItem : todoItems) {
-                            addNewItemToList(todoItem);
+                        for (TodoItem item : todoItems) {
+                            addNewItemToList(item);
                         }
                     }
                 });
@@ -97,16 +98,15 @@ public class OverviewActivity extends AppCompatActivity {
         }
     }
     
-    private void createItemAndUpdateList(TodoItem todoItem) {
+    private void createItemAndUpdateList(TodoItem item) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                long id = db.getDao().create(todoItem);
-                todoItem.setId(id);
+                TodoItem created = crudOperations.createItem(item);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        addNewItemToList(todoItem);
+                        addNewItemToList(created);
                     }
                 });
             }
