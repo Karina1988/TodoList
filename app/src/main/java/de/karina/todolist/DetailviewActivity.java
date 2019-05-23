@@ -15,8 +15,12 @@ public class DetailviewActivity extends AppCompatActivity {
     private EditText todoDescription;
     
     public static final String ARG_ITEM_ID = "itemId";
+    public static final int STATUS_CREATED = 1;
+    public static final int STATUS_EDITED = 2;
+    public static final int STATUS_DELETED = 3;
     
     public ITodoItemCRUDOperations crudOperations;
+    public TodoItem item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +41,11 @@ public class DetailviewActivity extends AppCompatActivity {
         long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
         if (itemId != -1) {
         	new Thread(() -> {
-	            TodoItem item = crudOperations.readItem(itemId);
-	            if (item != null) {
+	            this.item = crudOperations.readItem(itemId);
+	            if (this.item != null) {
 	            	runOnUiThread(() -> {
-		                todoTitle.setText(item.getTitle());
-		                todoDescription.setText(item.getDescription());
+		                this.todoTitle.setText(this.item.getTitle());
+		                this.todoDescription.setText(this.item.getDescription());
 		            });
 	            }
 	        }).start();
@@ -51,11 +55,22 @@ public class DetailviewActivity extends AppCompatActivity {
 
     private void saveItem() {
         Intent returnIntent = new Intent();
-    
-        TodoItem todoItem = new TodoItem(todoTitle.getText().toString(), todoDescription.getText().toString());
         
-        returnIntent.putExtra("item", todoItem);
-        setResult(RESULT_OK, returnIntent);
-        finish();
+        boolean create = false;
+        if (this.item == null) {
+	        this.item = new TodoItem();
+	        create = true;
+        }
+        this.item.setTitle(todoTitle.getText().toString());
+        this.item.setDescription(todoDescription.getText().toString());
+        
+        if (create) {
+	        new Thread(() -> {
+		        item = crudOperations.createItem(item);
+		        returnIntent.putExtra(ARG_ITEM_ID, item.getId());
+		        setResult(STATUS_CREATED, returnIntent);
+		        finish();
+	        }).start();
+        }
     }
 }

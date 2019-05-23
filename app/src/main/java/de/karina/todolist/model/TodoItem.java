@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Entity
 public class TodoItem implements Serializable {
-
+    
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String title;
@@ -17,6 +17,9 @@ public class TodoItem implements Serializable {
     private Boolean favorite;
     private Integer dueDate;
     private Integer dueTime;
+    
+    public TodoItem() {
+    }
     
     @Ignore
     public TodoItem(String title) {

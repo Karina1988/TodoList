@@ -96,17 +96,17 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CALL_DETAILVIEW_FOR_CREATE && resultCode == RESULT_OK) {
-            TodoItem todoItem = (TodoItem)data.getSerializableExtra("item");
-            createItemAndUpdateList(todoItem);
+        if (requestCode == CALL_DETAILVIEW_FOR_CREATE && resultCode == DetailviewActivity.STATUS_CREATED) {
+            long itemId = data.getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1);
+            readCreatedItemAndUpdateList(itemId);
         }
     }
     
-    private void createItemAndUpdateList(TodoItem item) {
+    private void readCreatedItemAndUpdateList(long itemId) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                TodoItem created = crudOperations.createItem(item);
+                TodoItem created = crudOperations.readItem(itemId);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
