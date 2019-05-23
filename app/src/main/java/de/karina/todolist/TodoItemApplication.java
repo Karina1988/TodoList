@@ -8,7 +8,7 @@ public class TodoItemApplication extends Application {
 	
 	private ITodoItemCRUDOperations crudOperations;
 	
-	public ITodoItemCRUDOperations getCrudOperations() {
+	public ITodoItemCRUDOperations getCRUDOperations() {
 		return crudOperations;
 	}
 	

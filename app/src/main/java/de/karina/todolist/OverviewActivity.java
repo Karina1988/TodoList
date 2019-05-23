@@ -1,13 +1,10 @@
 package de.karina.todolist;
 
 import android.content.Intent;
-import androidx.room.Room;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,15 +13,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
-import de.karina.todolist.model.impl.room.TodoItemDatabase;
 
-import java.io.DataInput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
-
+    
+    public static final int CALL_DETAILVIEW_FOR_CREATE = 0;
+    public static final int CALL_DETAILVIEW_FOR_EDIT = 1;
     private TodoDataSource dataSource;
     private FloatingActionButton addItemButton;
     private ArrayAdapter<TodoItem> todoListArrayAdapter;
@@ -64,10 +60,11 @@ public class OverviewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TodoItem clickedItem = todoListArrayAdapter.getItem(position);
+                handleSelectedItem(clickedItem);
             }
         });
         
-        this.crudOperations = ((TodoItemApplication)getApplication()).getCrudOperations();
+        this.crudOperations = ((TodoItemApplication)getApplication()).getCRUDOperations();
         
         new Thread(new Runnable() {
             @Override
@@ -84,15 +81,22 @@ public class OverviewActivity extends AppCompatActivity {
             }
         }).start();
     }
+    
+    private void handleSelectedItem(TodoItem item) {
+        Intent detailViewIntent = new Intent(this, DetailviewActivity.class);
+        detailViewIntent.putExtra(DetailviewActivity.ARG_ITEM_ID, item.getId());
+        
+        startActivityForResult(detailViewIntent, CALL_DETAILVIEW_FOR_EDIT);
+    }
 
     private void createNewItem() {
         Intent detailViewIntent = new Intent(this, DetailviewActivity.class);
-        startActivityForResult(detailViewIntent, 0);
+        startActivityForResult(detailViewIntent, CALL_DETAILVIEW_FOR_CREATE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 0 && resultCode == RESULT_OK) {
+        if (requestCode == CALL_DETAILVIEW_FOR_CREATE && resultCode == RESULT_OK) {
             TodoItem todoItem = (TodoItem)data.getSerializableExtra("item");
             createItemAndUpdateList(todoItem);
         }
