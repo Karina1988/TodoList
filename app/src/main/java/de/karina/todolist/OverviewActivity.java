@@ -15,6 +15,7 @@ import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
@@ -70,6 +71,15 @@ public class OverviewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 List<TodoItem> todoItems = crudOperations.readAllItems();
+                
+                
+                todoItems.sort(new Comparator<TodoItem>() {
+                    @Override
+                    public int compare(TodoItem o1, TodoItem o2) {
+                        return String.valueOf(o1.getName()).compareTo(o2.getName());
+                    }
+                });
+                
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
