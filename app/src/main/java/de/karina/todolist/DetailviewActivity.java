@@ -44,7 +44,7 @@ public class DetailviewActivity extends AppCompatActivity {
 	            this.item = crudOperations.readItem(itemId);
 	            if (this.item != null) {
 	            	runOnUiThread(() -> {
-		                this.todoTitle.setText(this.item.getTitle());
+		                this.todoTitle.setText(this.item.getName());
 		                this.todoDescription.setText(this.item.getDescription());
 		            });
 	            }
@@ -61,7 +61,7 @@ public class DetailviewActivity extends AppCompatActivity {
 	        this.item = new TodoItem();
 	        create = true;
         }
-        this.item.setTitle(todoTitle.getText().toString());
+        this.item.setName(todoTitle.getText().toString());
         this.item.setDescription(todoDescription.getText().toString());
         
         if (create) {

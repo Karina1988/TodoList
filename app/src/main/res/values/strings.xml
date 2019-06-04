@@ -1,5 +1,5 @@
 <resources>
 	<string name="app_name">TodoList</string>
-	<string name="title">Titel</string>
+	<string name="name">Titel</string>
 	<string name="description">Beschreibung</string>
 </resources>

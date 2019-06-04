@@ -11,7 +11,7 @@ public class TodoItem implements Serializable {
     
     @PrimaryKey(autoGenerate = true)
     private long id;
-    private String title;
+    private String name;
     private String description;
     private Boolean done;
     private Boolean favorite;
@@ -22,19 +22,19 @@ public class TodoItem implements Serializable {
     }
     
     @Ignore
-    public TodoItem(String title) {
-       this.setTitle(title);
+    public TodoItem(String name) {
+       this.setName(name);
     }
     
-    public TodoItem(String title, String description) {
-        this.setTitle(title);
+    public TodoItem(String name, String description) {
+        this.setName(name);
         this.setDescription(description);
     }
     
     @Ignore
-    public TodoItem(Integer id, String title, String description, Boolean done, Boolean favorite, Integer dueDate, Integer dueTime) {
+    public TodoItem(Integer id, String name, String description, Boolean done, Boolean favorite, Integer dueDate, Integer dueTime) {
         this.setId(id);
-        this.setTitle(title);
+        this.setName(name);
         this.setDescription(description);
         this.setDone(done);
         this.setFavorite(favorite);
@@ -50,12 +50,12 @@ public class TodoItem implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -102,7 +102,7 @@ public class TodoItem implements Serializable {
     public String toString() {
         return "TodoItem{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", done=" + done +
                 ", favorite=" + favorite +

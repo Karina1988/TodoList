@@ -51,7 +51,7 @@ public class OverviewActivity extends AppCompatActivity {
                 View todoView = getLayoutInflater().inflate(R.layout.activity_overview_listitem, null);
                 TextView todoTitleView = todoView.findViewById(R.id.todoTitle);
                 TodoItem currentItem = getItem(position);
-                todoTitleView.setText(currentItem.getTitle());
+                todoTitleView.setText(currentItem.getName());
                 return todoView;
             }
         };
