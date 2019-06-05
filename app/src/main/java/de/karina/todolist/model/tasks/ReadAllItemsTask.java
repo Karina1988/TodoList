@@ -1,6 +1,8 @@
 package de.karina.todolist.model.tasks;
 
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
 
@@ -11,9 +13,16 @@ public class ReadAllItemsTask extends AsyncTask<Void,Void, List<TodoItem>> {
 	
 	private ITodoItemCRUDOperations crudOperations;
 	private Consumer<List<TodoItem>> callback;
+	private ProgressBar progressBar;
 	
-	public ReadAllItemsTask(ITodoItemCRUDOperations crudOperations) {
+	public ReadAllItemsTask(ITodoItemCRUDOperations crudOperations, ProgressBar progressBar) {
 		this.crudOperations = crudOperations;
+		this.progressBar = progressBar;
+	}
+	
+	@Override
+	protected void onPreExecute() {
+		this.progressBar.setVisibility(View.VISIBLE);
 	}
 	
 	@Override
@@ -23,6 +32,7 @@ public class ReadAllItemsTask extends AsyncTask<Void,Void, List<TodoItem>> {
 	
 	@Override
 	protected void onPostExecute(List<TodoItem> todoItems) {
+		this.progressBar.setVisibility(View.GONE);
 		callback.accept(todoItems);
 	}
 	

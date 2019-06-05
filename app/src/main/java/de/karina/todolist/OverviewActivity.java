@@ -2,16 +2,14 @@ package de.karina.todolist;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.widget.*;
+import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
 import de.karina.todolist.model.tasks.ReadAllItemsTask;
@@ -28,6 +26,7 @@ public class OverviewActivity extends AppCompatActivity {
 	private FloatingActionButton addItemButton;
 	private ArrayAdapter<TodoItem> todoListArrayAdapter;
 	private ViewGroup todoList;
+	private ProgressBar progressBar;
 	
 	private ITodoItemCRUDOperations crudOperations;
 	
@@ -43,6 +42,8 @@ public class OverviewActivity extends AppCompatActivity {
 			createNewItem();
 		});
 		
+		progressBar = findViewById(R.id.progressBar);
+		
 		TodoItem todoItem = new TodoItem(1, "test", "desc", false, false, 3119, 800);
 		
 		dataSource = new TodoDataSource(this);
@@ -50,8 +51,11 @@ public class OverviewActivity extends AppCompatActivity {
 		todoList = (ListView) findViewById(R.id.todoList);
 		todoListArrayAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, tasks) {
 			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				View todoView = getLayoutInflater().inflate(R.layout.activity_overview_listitem, null);
+			public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+				View todoView = convertView;
+				if (todoView == null) { 
+					todoView = getLayoutInflater().inflate(R.layout.activity_overview_listitem, null);
+				}
 				TextView todoTitleView = todoView.findViewById(R.id.todoTitle);
 				TodoItem currentItem = getItem(position);
 				todoTitleView.setText(currentItem.getName());
@@ -69,7 +73,7 @@ public class OverviewActivity extends AppCompatActivity {
 		
 		this.crudOperations = ((TodoItemApplication) getApplication()).getCRUDOperations();
 		
-		new ReadAllItemsTask(this.crudOperations).run(items -> {
+		new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
 			items.sort(new Comparator<TodoItem>() {
 				@Override
 				public int compare(TodoItem o1, TodoItem o2) {
