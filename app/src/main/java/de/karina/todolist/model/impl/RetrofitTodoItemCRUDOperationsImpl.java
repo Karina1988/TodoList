@@ -79,7 +79,7 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 	public static interface TodoItemWebAPI {
 		
 		@POST("api/todos")
-		public Call<TodoItem> createItem(TodoItem item);
+		public Call<TodoItem> createItem(@Body TodoItem item);
 		
 		@GET("api/todos")
 		public Call<List<TodoItem>> readAllItems();
