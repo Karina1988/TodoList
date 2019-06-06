@@ -1,9 +1,6 @@
 package de.karina.todolist.model.impl.room;
 
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
+import androidx.room.*;
 import de.karina.todolist.model.TodoItem;
 
 import java.util.List;
@@ -23,4 +20,6 @@ public interface TodoItemDao {
 	@Delete
 	public void delete(TodoItem item);
 	
+	@Update
+	public void update(TodoItem item);
 }

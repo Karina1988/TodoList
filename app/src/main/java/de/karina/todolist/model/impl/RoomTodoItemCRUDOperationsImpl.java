@@ -37,7 +37,8 @@ public class RoomTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperations {
 	
 	@Override
 	public boolean updateItem(TodoItem item) {
-		return false;
+		todoItemDao.update(item);
+		return true;
 	}
 	
 	@Override
