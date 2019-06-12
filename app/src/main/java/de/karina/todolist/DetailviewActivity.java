@@ -46,19 +46,19 @@ public class DetailviewActivity extends AppCompatActivity {
 		todoTitle = findViewById(R.id.todoTitle);
 		todoDescription = findViewById(R.id.todoDescription);
 		
-		todoTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
-					if (textView.getText().length() > 0) {
-						saveButtoninOptions.setEnabled(true);
-						saveButtoninOptions.getIcon().setAlpha(255);
-						return true;
-					}
-				}
-				return false;
-			}
-		});
+//		todoTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//			@Override
+//			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+//				if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+//					if (textView.getText().length() > 0) {
+//						saveButtoninOptions.setEnabled(true);
+//						saveButtoninOptions.getIcon().setAlpha(255);
+//						return true;
+//					}
+//				}
+//				return false;
+//			}
+//		});
 		
 		long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
 		if (itemId != -1) {
@@ -106,8 +106,8 @@ public class DetailviewActivity extends AppCompatActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.overview_menu, menu);
 		saveButtoninOptions = menu.findItem(R.id.saveItem);
-		saveButtoninOptions.setEnabled(false);
-		saveButtoninOptions.getIcon().setAlpha(255);
+//		saveButtoninOptions.setEnabled(false);
+//		saveButtoninOptions.getIcon().setAlpha(255);
 		return true;
 	}
 	
