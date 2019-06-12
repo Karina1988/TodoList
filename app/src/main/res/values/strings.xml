@@ -2,4 +2,7 @@
 	<string name="app_name">TodoList</string>
 	<string name="name">Titel</string>
 	<string name="description">Beschreibung</string>
+	<string name="date">Fälligkeit</string>
+	<string name="done">Erledigt</string>
+	<string name="deleteButton">Löschen</string>
 </resources>

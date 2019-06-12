@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent"
-											 xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools" 
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<com.google.android.material.textfield.TextInputLayout
 			android:id="@+id/todoTitleWrapper"
 			android:singleLine="true"
@@ -13,10 +15,10 @@
 			android:layout_height="wrap_content"
 			android:hint="@string/name">
 			<com.google.android.material.textfield.TextInputEditText
-				android:id="@+id/todoTitle"
-				android:singleLine="true"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
+					android:id="@+id/todoTitle"
+					android:singleLine="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" />
 	</com.google.android.material.textfield.TextInputLayout>
 
 	<com.google.android.material.textfield.TextInputLayout
@@ -26,13 +28,29 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:hint="@string/description">
-		<com.google.android.material.textfield.TextInputEditText
-				android:id="@+id/todoDescription"
-				android:lines="10"
-				android:minLines="5"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
+			<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/todoDescription"
+					android:lines="10"
+					android:minLines="5"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" />
 	</com.google.android.material.textfield.TextInputLayout>
+	
+	<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/todoDate"
+			app:hintEnabled="true"
+			android:hint="@string/date"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="date"
+			app:layout_constraintTop_toBottomOf="@+id/todoDescriptionWrapper" />
+	
+	<CheckBox
+			android:id="@+id/todoDone"
+			android:text="@string/done"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintTop_toBottomOf="@+id/todoDate"/>
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/saveButton"
