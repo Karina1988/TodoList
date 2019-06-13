@@ -84,6 +84,16 @@
 				android:layout_height="wrap_content" />
 	</com.google.android.material.textfield.TextInputLayout>
 
+	<Button
+			android:id="@+id/deleteButton"
+			android:text="@string/deleteButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/todoDoneWrapper"
+			android:autoText="false" android:textColor="@android:color/holo_red_dark"/>
+	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/saveButton"
 			android:src="@drawable/baseline_save_white_18dp"

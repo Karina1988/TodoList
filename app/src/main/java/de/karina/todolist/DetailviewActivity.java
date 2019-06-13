@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,11 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.EditText;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.tasks.DeleteItemTask;
 import de.karina.todolist.model.tasks.UpdateItemTask;
 
 public class DetailviewActivity extends AppCompatActivity {
 	
 	private FloatingActionButton saveButton;
+	private Button deleteButton;
 	private EditText todoTitle;
 	private EditText todoDescription;
 	private CheckBox todoDone;
@@ -43,6 +46,11 @@ public class DetailviewActivity extends AppCompatActivity {
 		saveButton = findViewById(R.id.saveButton);
 		saveButton.setOnClickListener((view) -> {
 			saveItem();
+		});
+		
+		deleteButton = findViewById(R.id.deleteButton);
+		deleteButton.setOnClickListener((view) -> {
+			deleteItem();
 		});
 		
 		todoTitle = findViewById(R.id.todoTitle);
@@ -109,6 +117,15 @@ public class DetailviewActivity extends AppCompatActivity {
 				finish();
 			});
 		}
+	}
+	
+	private void deleteItem() {
+		new DeleteItemTask(crudOperations).run(item.getId(), deleted -> {
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(ARG_ITEM_ID, item.getId());
+			setResult(STATUS_DELETED, returnIntent);
+			finish();
+		});
 	}
 	
 	@Override

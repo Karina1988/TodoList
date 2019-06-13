@@ -4,6 +4,6 @@
 	<string name="description">Description</string>
 	<string name="date">Date</string>
 	<string name="done">Done</string>
-	<string name="deleteButton">Delete</string>
+	<string name="deleteButton">Delete item</string>
 	<string name="favorite">Mark as high priority</string>
 </resources>

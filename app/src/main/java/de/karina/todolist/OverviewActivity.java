@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.tasks.DeleteItemTask;
 import de.karina.todolist.model.tasks.ReadAllItemsTask;
 import de.karina.todolist.model.tasks.ReadItemTask;
 import de.karina.todolist.model.tasks.UpdateItemTask;
@@ -90,7 +91,11 @@ public class OverviewActivity extends AppCompatActivity {
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						currentItem.setDone(isChecked);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
-							Toast.makeText(OverviewActivity.this, "Updated item with name " + currentItem.getName(), Toast.LENGTH_SHORT).show();
+							if (currentItem.isDone()) {
+								Toast.makeText(OverviewActivity.this, "Set item with name " + currentItem.getName() + " as done", Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(OverviewActivity.this, "Unset item with name " + currentItem.getName() + " as done", Toast.LENGTH_SHORT).show();
+							}
 						});
 					}
 				});
@@ -103,7 +108,11 @@ public class OverviewActivity extends AppCompatActivity {
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						currentItem.setFavourite(isChecked);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
-							Toast.makeText(OverviewActivity.this, "Updated item with name " + currentItem.getName(), Toast.LENGTH_SHORT).show();
+							if (currentItem.isFavourite()) {
+								Toast.makeText(OverviewActivity.this, "Marked item with name " + currentItem.getName() + " as favorite.", Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(OverviewActivity.this, "Unmarked item with name " + currentItem.getName() + " as favorite.", Toast.LENGTH_SHORT).show();
+							}
 						});
 					}
 				});
@@ -139,7 +148,12 @@ public class OverviewActivity extends AppCompatActivity {
 					updateSortAndFocusItem(item);
 				});
 			} else if (resultCode == DetailviewActivity.STATUS_DELETED) {
-				//für Semesterprojekt
+				long itemId = data.getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1);
+				new DeleteItemTask(this.crudOperations).run(itemId, item -> {
+					this.items.removeIf(currentItem -> currentItem.getId() == itemId);
+					updateSortAndFocusItem(null);
+				});
+				Toast.makeText(OverviewActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
 			}
 				
 		}

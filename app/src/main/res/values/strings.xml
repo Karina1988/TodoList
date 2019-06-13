@@ -5,5 +5,5 @@
 	<string name="date">Fälligkeit</string>
 	<string name="done">Erledigt</string>
 	<string name="favorite">Als wichtig markieren</string>
-	<string name="deleteButton">Löschen</string>
+	<string name="deleteButton">Eintrag Löschen</string>
 </resources>
