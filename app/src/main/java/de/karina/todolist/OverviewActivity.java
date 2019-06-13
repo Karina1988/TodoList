@@ -23,21 +23,22 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	public static final int CALL_DETAILVIEW_FOR_CREATE = 0;
 	public static final int CALL_DETAILVIEW_FOR_EDIT = 1;
-	private TodoDataSource dataSource;
-	private FloatingActionButton addItemButton;
-	private ArrayAdapter<TodoItem> todoListArrayAdapter;
 	private ViewGroup todoList;
+	private ArrayAdapter<TodoItem> todoListArrayAdapter;
+	private FloatingActionButton addItemButton;
 	private ProgressBar progressBar;
-	
 	private ITodoItemCRUDOperations crudOperations;
 	
 	private List<TodoItem> items = new ArrayList<>();
+	
+	private Comparator<TodoItem> alphabeticComparator = (l,r) -> String.valueOf(l.getName()).compareTo(r.getName());
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_overview);
 		
+		//read UI elements
 		progressBar = findViewById(R.id.progressBar);
 		todoList = (ListView) findViewById(R.id.todoList);
 		addItemButton = findViewById(R.id.addItemButton);
@@ -45,8 +46,6 @@ public class OverviewActivity extends AppCompatActivity {
 		addItemButton.setOnClickListener((view) -> {
 			createNewItem();
 		});
-		
-		dataSource = new TodoDataSource(this);
 		
 		//set listener
 		todoListArrayAdapter = createListviewAdapter();
@@ -63,13 +62,8 @@ public class OverviewActivity extends AppCompatActivity {
 		this.crudOperations = ((TodoItemApplication) getApplication()).getCRUDOperations();
 		
 		new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
-			items.sort(new Comparator<TodoItem>() {
-				@Override
-				public int compare(TodoItem o1, TodoItem o2) {
-					return String.valueOf(o1.getName()).compareTo(o2.getName());
-				}
-			});
 			todoListArrayAdapter.addAll(items);
+			updateSortAndFocusItem(null);
 		});
 	}
 	
@@ -139,6 +133,7 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	private void updateSortAndFocusItem(TodoItem item) {
 		//sort
+		this.todoListArrayAdapter.sort(alphabeticComparator);
 		if (item != null) {
 			((ListView)this.todoList).setSelection(this.todoListArrayAdapter.getPosition(item));
 		}
