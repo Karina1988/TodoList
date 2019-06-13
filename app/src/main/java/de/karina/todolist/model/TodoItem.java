@@ -17,8 +17,7 @@ public class TodoItem implements Serializable {
 	@SerializedName("done")
 	private boolean done;
 	
-	@SerializedName("favourite")
-	private boolean favorite;
+	private boolean favourite;
 	
 	@SerializedName("expiry")
 	private Integer expiry;
@@ -62,12 +61,12 @@ public class TodoItem implements Serializable {
 		this.done = done;
 	}
 	
-	public Boolean getFavorite() {
-		return favorite;
+	public boolean isFavourite() {
+		return favourite;
 	}
 	
-	public void setFavorite(Boolean favorite) {
-		this.favorite = favorite;
+	public void setFavourite(boolean favourite) {
+		this.favourite = favourite;
 	}
 	
 	public Integer getExpiry() {
@@ -85,7 +84,7 @@ public class TodoItem implements Serializable {
 				", name='" + name + '\'' +
 				", description='" + description + '\'' +
 				", done=" + done +
-				", favourite=" + favorite +
+				", favourite=" + favourite +
 				", expiry=" + expiry +
 				'}';
 	}

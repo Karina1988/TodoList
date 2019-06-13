@@ -78,6 +78,7 @@ public class OverviewActivity extends AppCompatActivity {
 				}
 				TextView todoTitleView = todoView.findViewById(R.id.todoTitle);
 				CheckBox itemReadyView = todoView.findViewById(R.id.todoDone);
+				CheckBox itemFavouriteView = todoView.findViewById(R.id.todoFavorite);
 				TodoItem currentItem = getItem(position);
 				todoTitleView.setText(currentItem.getName());
 				
@@ -88,6 +89,19 @@ public class OverviewActivity extends AppCompatActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						currentItem.setDone(isChecked);
+						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
+							Toast.makeText(OverviewActivity.this, "Updated item with name " + currentItem.getName(), Toast.LENGTH_SHORT).show();
+						});
+					}
+				});
+				
+				//favorite star checkbox
+				itemFavouriteView.setOnCheckedChangeListener(null);
+				itemFavouriteView.setChecked(currentItem.isFavourite());
+				itemFavouriteView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						currentItem.setFavourite(isChecked);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							Toast.makeText(OverviewActivity.this, "Updated item with name " + currentItem.getName(), Toast.LENGTH_SHORT).show();
 						});
