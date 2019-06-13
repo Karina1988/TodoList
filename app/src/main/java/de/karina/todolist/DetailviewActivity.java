@@ -1,5 +1,7 @@
 package de.karina.todolist;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.EditText;
@@ -50,7 +53,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		
 		deleteButton = findViewById(R.id.deleteButton);
 		deleteButton.setOnClickListener((view) -> {
-			deleteItem();
+			openDeleteAlertDialog();
 		});
 		
 		todoTitle = findViewById(R.id.todoTitle);
@@ -117,6 +120,20 @@ public class DetailviewActivity extends AppCompatActivity {
 				finish();
 			});
 		}
+	}
+	
+	private void openDeleteAlertDialog() {
+		new AlertDialog.Builder(this)
+			.setTitle("Delete item")
+			.setMessage("Are you sure you want to delete this item?")
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					deleteItem();
+				}
+			})
+			.setNegativeButton(android.R.string.no, null)
+			.setIcon(android.R.drawable.ic_delete)
+			.show();
 	}
 	
 	private void deleteItem() {
