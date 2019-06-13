@@ -5,4 +5,5 @@
 	<string name="date">Date</string>
 	<string name="done">Done</string>
 	<string name="deleteButton">Delete</string>
+	<string name="favorite">Mark as high priority</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:orientation="horizontal"
+			  xmlns:tools="http://schemas.android.com/tools" android:orientation="horizontal"
 			  android:gravity="center"
 			  android:layout_weight="1"
 			  android:layout_width="match_parent"
@@ -10,10 +10,19 @@
 			android:id="@+id/todoDone"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"/>
-	<TextView 
+	<TextView
 			android:id="@+id/todoTitle"
 			android:textSize="30dp"
 			android:padding="10dp"
-			android:layout_width="match_parent" 
+			android:layout_width="340dp"
 			android:layout_height="wrap_content"/>
+	<CheckBox
+			android:id="@+id/todoFavorite"
+			android:padding="10dp"
+			android:focusable="false"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			style="?android:attr/starStyle"/>
 </LinearLayout> 

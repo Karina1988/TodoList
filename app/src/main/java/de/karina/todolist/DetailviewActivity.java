@@ -39,7 +39,6 @@ public class DetailviewActivity extends AppCompatActivity {
 		
 		crudOperations = ((TodoItemApplication) getApplication()).getCRUDOperations();
 		
-		
 		saveButton = findViewById(R.id.saveButton);
 		saveButton.setOnClickListener((view) -> {
 			saveItem();
@@ -75,7 +74,6 @@ public class DetailviewActivity extends AppCompatActivity {
 					});
 				}
 			}).start();
-			
 		}
 	}
 	
