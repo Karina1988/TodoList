@@ -91,11 +91,13 @@ public class DetailviewActivity extends AppCompatActivity {
 		if (create) {
 			new Thread(() -> {
 				item = crudOperations.createItem(item);
+				returnIntent.putExtra(ARG_ITEM_ID, item.getId());
 				setResult(STATUS_CREATED, returnIntent);
 				finish();
 			}).start();
 		} else {
 			new UpdateItemTask(crudOperations).run(this.item, updated -> {
+				returnIntent.putExtra(ARG_ITEM_ID, item.getId());
 				setResult(STATUS_EDITED, returnIntent);
 				finish();
 			});
