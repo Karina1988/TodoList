@@ -10,6 +10,7 @@
 			android:singleLine="true"
 			android:inputType="text"
 			app:hintEnabled="true"
+			android:padding="10dp"
 			app:layout_constraintTop_toTopOf="parent"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
 	<com.google.android.material.textfield.TextInputLayout
 			android:id="@+id/todoDescriptionWrapper"
 			app:hintEnabled="true"
+			android:padding="10dp"
 			app:layout_constraintTop_toBottomOf="@+id/todoTitleWrapper"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -35,22 +37,36 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content" />
 	</com.google.android.material.textfield.TextInputLayout>
-	
-	<com.google.android.material.textfield.TextInputEditText
-			android:id="@+id/todoDate"
+
+	<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/todoDateWrapper"
 			app:hintEnabled="true"
+			android:padding="10dp"
+			app:layout_constraintTop_toBottomOf="@+id/todoDescriptionWrapper"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
 			android:hint="@string/date"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:inputType="date"
-			app:layout_constraintTop_toBottomOf="@+id/todoDescriptionWrapper" />
+			android:inputType="date">
+			<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/todoDate"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" />
+	</com.google.android.material.textfield.TextInputLayout>
 	
-	<CheckBox
-			android:id="@+id/todoDone"
-			android:text="@string/done"
+	<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/todoDoneWrapper"
+			android:padding="10dp"
+			app:layout_constraintTop_toBottomOf="@+id/todoDateWrapper"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			app:layout_constraintTop_toBottomOf="@+id/todoDate"/>
+			android:hint="@string/name">
+		<CheckBox
+				android:id="@+id/todoDone"
+				android:text="@string/done"
+				android:padding="10dp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+	</com.google.android.material.textfield.TextInputLayout>
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/saveButton"
