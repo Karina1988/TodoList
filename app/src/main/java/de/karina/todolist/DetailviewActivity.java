@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ public class DetailviewActivity extends AppCompatActivity {
 	private FloatingActionButton saveButton;
 	private EditText todoTitle;
 	private EditText todoDescription;
+	private CheckBox todoDone;
 	
 	public static final String ARG_ITEM_ID = "itemId";
 	public static final int STATUS_CREATED = 1;
@@ -45,6 +47,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		
 		todoTitle = findViewById(R.id.todoTitle);
 		todoDescription = findViewById(R.id.todoDescription);
+		todoDone = findViewById(R.id.todoDone);
 		
 //		todoTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //			@Override
@@ -68,6 +71,7 @@ public class DetailviewActivity extends AppCompatActivity {
 					runOnUiThread(() -> {
 						this.todoTitle.setText(this.item.getName());
 						this.todoDescription.setText(this.item.getDescription());
+						this.todoDone.setChecked(this.item.isDone());
 					});
 				}
 			}).start();
@@ -87,6 +91,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		
 		this.item.setName(todoTitle.getText().toString());
 		this.item.setDescription(todoDescription.getText().toString());
+		this.item.setDone(this.todoDone.isChecked());
 		
 		if (create) {
 			new Thread(() -> {
