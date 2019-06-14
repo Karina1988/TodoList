@@ -1,24 +1,25 @@
 package de.karina.todolist;
 
-import android.content.Context;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
-import android.widget.EditText;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
 import de.karina.todolist.model.tasks.DeleteItemTask;
 import de.karina.todolist.model.tasks.UpdateItemTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DetailviewActivity extends AppCompatActivity {
 	
@@ -28,6 +29,8 @@ public class DetailviewActivity extends AppCompatActivity {
 	private EditText todoDescription;
 	private CheckBox todoDone;
 	private CheckBox todoFavourite;
+	private EditText todoDate;
+	private EditText todoTime;
 	
 	public static final String ARG_ITEM_ID = "itemId";
 	public static final int STATUS_CREATED = 1;
@@ -36,6 +39,8 @@ public class DetailviewActivity extends AppCompatActivity {
 	
 	private ITodoItemCRUDOperations crudOperations;
 	private TodoItem item;
+	
+	final Calendar myCalendar = Calendar.getInstance();
 	
 	private MenuItem saveButtoninOptions;
 	
@@ -60,6 +65,51 @@ public class DetailviewActivity extends AppCompatActivity {
 		todoDescription = findViewById(R.id.todoDescription);
 		todoDone = findViewById(R.id.todoDone);
 		todoFavourite = findViewById(R.id.todoFavorite);
+		todoDate = findViewById(R.id.todoDate);
+		todoTime = findViewById(R.id.todoTime);
+		
+		//datepicker
+		DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+			                      int dayOfMonth) {
+				// TODO Auto-generated method stub
+				myCalendar.set(Calendar.YEAR, year);
+				myCalendar.set(Calendar.MONTH, monthOfYear);
+				myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+				updateTodoDate();
+			}
+		};
+		
+		//timepicker
+		TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+			@Override
+			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+				myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+				myCalendar.set(Calendar.MINUTE, minute);
+				updateTodoTime();
+			}
+		};
+		
+		todoDate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new DatePickerDialog(DetailviewActivity.this, date, myCalendar
+						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+			}
+		});
+		
+		todoTime.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new TimePickerDialog(DetailviewActivity.this, time, 
+						myCalendar.get(Calendar.HOUR_OF_DAY), 
+						myCalendar.get(Calendar.MINUTE), true).show();
+			}
+		});
 		
 //		todoTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //			@Override
@@ -89,6 +139,20 @@ public class DetailviewActivity extends AppCompatActivity {
 				}
 			}).start();
 		}
+	}
+	
+	private void updateTodoDate() {
+		String myFormat = "dd.MM.yyyy";
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		
+		todoDate.setText(sdf.format(myCalendar.getTime()));
+	}
+	
+	private void updateTodoTime() {
+		String myFormat = "hh:mm";
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		
+		todoTime.setText(sdf.format(myCalendar.getTime()));
 	}
 	
 	private void saveItem() {

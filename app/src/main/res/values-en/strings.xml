@@ -6,4 +6,7 @@
 	<string name="done">Done</string>
 	<string name="deleteButton">Delete item</string>
 	<string name="favorite">Mark as high priority</string>
+	<string name="sortByDate">Sort by date</string>
+	<string name="sortByFavorite">Sort by favorite</string>
+	<string name="time">Time</string>
 </resources>

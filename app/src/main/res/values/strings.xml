@@ -3,7 +3,10 @@
 	<string name="name">Titel</string>
 	<string name="description">Beschreibung</string>
 	<string name="date">Fälligkeit</string>
+	<string name="time">Zeit</string>
 	<string name="done">Erledigt</string>
 	<string name="favorite">Als wichtig markieren</string>
 	<string name="deleteButton">Eintrag Löschen</string>
+	<string name="sortByDate">Sortieren nach Datum</string>
+	<string name="sortByFavorite">Sortieren nach Wichtigkeit</string>
 </resources>
