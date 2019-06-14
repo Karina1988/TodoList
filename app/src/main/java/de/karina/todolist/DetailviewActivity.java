@@ -147,7 +147,7 @@ public class DetailviewActivity extends AppCompatActivity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.overview_menu, menu);
+		getMenuInflater().inflate(R.menu.detailview_menu, menu);
 		saveButtoninOptions = menu.findItem(R.id.saveItem);
 //		saveButtoninOptions.setEnabled(false);
 //		saveButtoninOptions.getIcon().setAlpha(255);

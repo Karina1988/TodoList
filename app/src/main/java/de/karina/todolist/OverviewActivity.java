@@ -1,6 +1,8 @@
 package de.karina.todolist;
 
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,9 +32,12 @@ public class OverviewActivity extends AppCompatActivity {
 	private ProgressBar progressBar;
 	private ITodoItemCRUDOperations crudOperations;
 	
+	private MenuItem moreOptionsMenu;
+	
 	private List<TodoItem> items = new ArrayList<>();
 	
-	private Comparator<TodoItem> alphabeticComparator = (l,r) -> String.valueOf(l.getName()).compareTo(r.getName());
+	private Comparator<TodoItem> doneComparator = (l,r) -> Boolean.valueOf(l.isDone()).compareTo(r.isDone());
+	private Comparator<TodoItem> favoriteComparator = (l,r) -> Boolean.valueOf(r.isFavourite()).compareTo(l.isFavourite());
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -155,15 +160,43 @@ public class OverviewActivity extends AppCompatActivity {
 				});
 				Toast.makeText(OverviewActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
 			}
-				
+		} else {
+			updateSortAndFocusItem(null);
 		}
 	}
 	
 	private void updateSortAndFocusItem(TodoItem item) {
-		//sort
-		this.todoListArrayAdapter.sort(alphabeticComparator);
+		//sort by done status
+		this.todoListArrayAdapter.sort(doneComparator);
 		if (item != null) {
 			((ListView)this.todoList).setSelection(this.todoListArrayAdapter.getPosition(item));
+		}
+	}
+	
+	private void sortItemsByFavorite() {
+		this.todoListArrayAdapter.sort(favoriteComparator);
+	}
+	
+	private void sortItemsByDate() {
+		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.overview_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.sortItemsByFavorite) {
+			sortItemsByFavorite();
+			return true;
+		} else if (item.getItemId() == R.id.sortItemsByDate) {
+			sortItemsByDate();
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
 		}
 	}
 }
