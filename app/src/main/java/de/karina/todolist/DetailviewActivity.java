@@ -17,8 +17,10 @@ import de.karina.todolist.model.TodoItem;
 import de.karina.todolist.model.tasks.DeleteItemTask;
 import de.karina.todolist.model.tasks.UpdateItemTask;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DetailviewActivity extends AppCompatActivity {
@@ -43,6 +45,12 @@ public class DetailviewActivity extends AppCompatActivity {
 	final Calendar myCalendar = Calendar.getInstance();
 	
 	private MenuItem saveButtoninOptions;
+	
+	
+	String dateFormat = "dd.MM.yyyy";
+	String timeFormat = "HH:mm";
+	DateFormat df = new SimpleDateFormat(dateFormat);
+	DateFormat tf = new SimpleDateFormat(timeFormat);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +85,7 @@ public class DetailviewActivity extends AppCompatActivity {
 				myCalendar.set(Calendar.YEAR, year);
 				myCalendar.set(Calendar.MONTH, monthOfYear);
 				myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-				updateTodoDate();
+				setTodoDateToToday();
 			}
 		};
 		
@@ -87,7 +95,7 @@ public class DetailviewActivity extends AppCompatActivity {
 			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 				myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 				myCalendar.set(Calendar.MINUTE, minute);
-				updateTodoTime();
+				setTodoTimeToToday();
 			}
 		};
 		
@@ -135,23 +143,32 @@ public class DetailviewActivity extends AppCompatActivity {
 						this.todoDescription.setText(this.item.getDescription());
 						this.todoDone.setChecked(this.item.isDone());
 						this.todoFavourite.setChecked(this.item.isFavourite());
+						
+						String todoDateAsString = df.format(new Date(this.item.getExpiry()));
+						todoDate.setText(todoDateAsString);
+						
+						String todoTimeAsString = tf.format(new Date(this.item.getExpiry()));
+						todoTime.setText(todoTimeAsString);
 					});
 				}
+			}).start();
+		} else {
+			new Thread(() -> {
+				runOnUiThread(() -> {
+					setTodoDateToToday();
+					setTodoTimeToToday();
+				});
 			}).start();
 		}
 	}
 	
-	private void updateTodoDate() {
-		String myFormat = "dd.MM.yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		
+	private void setTodoDateToToday() {
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.US);
 		todoDate.setText(sdf.format(myCalendar.getTime()));
 	}
 	
-	private void updateTodoTime() {
-		String myFormat = "hh:mm";
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		
+	private void setTodoTimeToToday() {
+		SimpleDateFormat sdf = new SimpleDateFormat(timeFormat, Locale.US);
 		todoTime.setText(sdf.format(myCalendar.getTime()));
 	}
 	
@@ -169,6 +186,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		this.item.setDescription(todoDescription.getText().toString());
 		this.item.setDone(this.todoDone.isChecked());
 		this.item.setFavourite(this.todoFavourite.isChecked());
+		this.item.setExpiry(myCalendar.getTimeInMillis());
 		
 		if (create) {
 			new Thread(() -> {

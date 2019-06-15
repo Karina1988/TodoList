@@ -18,9 +18,9 @@ import de.karina.todolist.model.tasks.ReadAllItemsTask;
 import de.karina.todolist.model.tasks.ReadItemTask;
 import de.karina.todolist.model.tasks.UpdateItemTask;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class OverviewActivity extends AppCompatActivity {
 	
@@ -38,6 +38,8 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	private Comparator<TodoItem> doneComparator = (l,r) -> Boolean.valueOf(l.isDone()).compareTo(r.isDone());
 	private Comparator<TodoItem> favoriteComparator = (l,r) -> Boolean.valueOf(r.isFavourite()).compareTo(l.isFavourite());
+	
+	DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,6 @@ public class OverviewActivity extends AppCompatActivity {
 			}
 		});
 		
-		
 		this.crudOperations = ((TodoItemApplication) getApplication()).getCRUDOperations();
 		
 		new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
@@ -85,8 +86,15 @@ public class OverviewActivity extends AppCompatActivity {
 				TextView todoTitleView = todoView.findViewById(R.id.todoTitle);
 				CheckBox itemReadyView = todoView.findViewById(R.id.todoDone);
 				CheckBox itemFavouriteView = todoView.findViewById(R.id.todoFavorite);
+				TextView todoDate = todoView.findViewById(R.id.todoDate);
 				TodoItem currentItem = getItem(position);
+				
 				todoTitleView.setText(currentItem.getName());
+				
+				long todoDateInMilliseconds = currentItem.getExpiry();
+				Date date = new Date(todoDateInMilliseconds);
+				String todoDateAsString = df.format(date);
+				todoDate.setText(todoDateAsString);
 				
 				//remove listener before setChecked status in order to avoid problems when recycling the view
 				itemReadyView.setOnCheckedChangeListener(null);
@@ -95,6 +103,7 @@ public class OverviewActivity extends AppCompatActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						currentItem.setDone(isChecked);
+						updateSortAndFocusItem(null);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							if (currentItem.isDone()) {
 								Toast.makeText(OverviewActivity.this, "Set item with name " + currentItem.getName() + " as done", Toast.LENGTH_SHORT).show();

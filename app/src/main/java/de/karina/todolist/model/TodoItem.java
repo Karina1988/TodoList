@@ -20,7 +20,7 @@ public class TodoItem implements Serializable {
 	private boolean favourite;
 	
 	@SerializedName("expiry")
-	private Integer expiry;
+	private long expiry;
 	
 	public TodoItem() {
 	}
@@ -69,11 +69,11 @@ public class TodoItem implements Serializable {
 		this.favourite = favourite;
 	}
 	
-	public Integer getExpiry() {
+	public long getExpiry() {
 		return expiry;
 	}
 	
-	public void setExpiry(Integer expiry) {
+	public void setExpiry(long expiry) {
 		this.expiry = expiry;
 	}
 	
