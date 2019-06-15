@@ -1,6 +1,7 @@
 package de.karina.todolist;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
@@ -38,8 +39,11 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	private Comparator<TodoItem> doneComparator = (l,r) -> Boolean.valueOf(l.isDone()).compareTo(r.isDone());
 	private Comparator<TodoItem> favoriteComparator = (l,r) -> Boolean.valueOf(r.isFavourite()).compareTo(l.isFavourite());
+	private Comparator<TodoItem> dateComparator = (l,r) -> Long.valueOf(l.getExpiry()).compareTo(r.getExpiry());
 	
 	DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+	
+	private int sortModus;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,7 @@ public class OverviewActivity extends AppCompatActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						currentItem.setFavourite(isChecked);
+						updateSortAndFocusItem(null);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							if (currentItem.isFavourite()) {
 								Toast.makeText(OverviewActivity.this, "Marked item with name " + currentItem.getName() + " as favorite.", Toast.LENGTH_SHORT).show();
@@ -175,11 +180,20 @@ public class OverviewActivity extends AppCompatActivity {
 	}
 	
 	private void updateSortAndFocusItem(TodoItem item) {
-		//sort by done status
-		this.todoListArrayAdapter.sort(doneComparator);
+		if (sortModus == 1) {
+			sortItemsByFavorite();
+		} else if (sortModus == 2) {
+			sortItemsByDate();
+		} else {
+			sortItemByDoneStatus();
+		}
 		if (item != null) {
 			((ListView)this.todoList).setSelection(this.todoListArrayAdapter.getPosition(item));
 		}
+	}
+	
+	private void sortItemByDoneStatus() {
+		this.todoListArrayAdapter.sort(doneComparator);
 	}
 	
 	private void sortItemsByFavorite() {
@@ -187,7 +201,7 @@ public class OverviewActivity extends AppCompatActivity {
 	}
 	
 	private void sortItemsByDate() {
-		
+		this.todoListArrayAdapter.sort(dateComparator);
 	}
 	
 	@Override
@@ -199,9 +213,11 @@ public class OverviewActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.sortItemsByFavorite) {
+			sortModus = 1;
 			sortItemsByFavorite();
 			return true;
 		} else if (item.getItemId() == R.id.sortItemsByDate) {
+			sortModus = 2;
 			sortItemsByDate();
 			return true;
 		} else {
