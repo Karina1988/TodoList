@@ -2,6 +2,7 @@ package de.karina.todolist.model.impl;
 
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.User;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -76,6 +77,11 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		}
 	}
 	
+	@Override
+	public boolean authenticateUser(User user) {
+		return "s@bht.de".equals(user.getEmail()) && "000000".equals(user.getPwd());
+	}
+	
 	public static interface TodoItemWebAPI {
 		
 		@POST("api/todos")
@@ -92,5 +98,8 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		
 		@DELETE("api/todos/{itemId}")
 		public Call<Boolean> deleteItem(@Path("itemId")long id);
+		
+		@PUT("/api/users/auth")
+		public Call<Boolean> authenticateUser(@Body User user);
 	}
 }

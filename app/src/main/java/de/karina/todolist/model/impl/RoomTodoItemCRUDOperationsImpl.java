@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.room.Room;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.User;
 import de.karina.todolist.model.impl.room.TodoItemDao;
 import de.karina.todolist.model.impl.room.TodoItemDatabase;
 
@@ -49,5 +50,10 @@ public class RoomTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperations {
 		}
 		todoItemDao.delete(item);
 		return true;
+	}
+	
+	@Override
+	public boolean authenticateUser(User user) {
+		return "s@bht.de".equals(user.getEmail()) && "000000".equals(user.getPwd());
 	}
 }
