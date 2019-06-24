@@ -14,10 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
-import de.karina.todolist.model.tasks.DeleteItemTask;
-import de.karina.todolist.model.tasks.ReadAllItemsTask;
-import de.karina.todolist.model.tasks.ReadItemTask;
-import de.karina.todolist.model.tasks.UpdateItemTask;
+import de.karina.todolist.model.tasks.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,7 +67,12 @@ public class OverviewActivity extends AppCompatActivity {
 			}
 		});
 		
-		this.crudOperations = ((TodoItemApplication) getApplication()).getCRUDOperations();
+		new CheckRemoteAvailableTask().run(available -> {
+			((TodoItemApplication)getApplication()).setRemoteCRUDMode(available);
+		});
+		
+		//initialise the view with data
+		this.crudOperations = ((TodoItemApplication)getApplication()).getCRUDOperations();
 		
 		new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
 			todoListArrayAdapter.addAll(items);
@@ -221,7 +223,7 @@ public class OverviewActivity extends AppCompatActivity {
 			sortItemsByDate();
 			return true;
 		} else {
-			return super.onOptionsItemSelected(item);
-		}
+		return super.onOptionsItemSelected(item);
+	}
 	}
 }

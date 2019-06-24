@@ -101,5 +101,8 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		
 		@PUT("/api/users/auth")
 		public Call<Boolean> authenticateUser(@Body User user);
+		
+		@DELETE("api/todos")
+		public Call<Boolean> deleteAllTodos();
 	}
 }
