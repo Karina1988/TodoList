@@ -13,7 +13,7 @@
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/addItemButton"
-			android:src="@drawable/baseline_add_white_18dp"
+			android:src="@drawable/baseline_add_white_24dp"
 			android:backgroundTint="@color/colorPrimary"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
