@@ -177,7 +177,8 @@ public class DetailviewActivity extends AppCompatActivity {
 						
 						String todoTimeAsString = tf.format(new Date(this.item.getExpiry()));
 						todoTime.setText(todoTimeAsString);
-						((ListView) contactList).setAdapter(contactsArrayAdapter);
+						
+						this.contactsArrayAdapter.addAll(this.item.getContacts());
 					});
 				}
 			}).start();
@@ -202,7 +203,6 @@ public class DetailviewActivity extends AppCompatActivity {
 				}
 				TextView contactNameView = contactView.findViewById(R.id.contact);
 				String currentItem = getItem(position);
-				
 				
 				contactNameView.setText(currentItem);
 				return contactView;
