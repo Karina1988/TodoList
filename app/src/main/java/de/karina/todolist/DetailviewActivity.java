@@ -1,14 +1,24 @@
 package de.karina.todolist;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,9 +29,7 @@ import de.karina.todolist.model.tasks.UpdateItemTask;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 public class DetailviewActivity extends AppCompatActivity {
 	
@@ -33,14 +41,22 @@ public class DetailviewActivity extends AppCompatActivity {
 	private CheckBox todoFavourite;
 	private EditText todoDate;
 	private EditText todoTime;
+	private ViewGroup contactList;
 	
 	public static final String ARG_ITEM_ID = "itemId";
 	public static final int STATUS_CREATED = 1;
 	public static final int STATUS_EDITED = 2;
 	public static final int STATUS_DELETED = 3;
+	public static final int CALL_CONTACT_PICKER = 4;
+	
+	private static final String LOGGING_TAG = DetailviewActivity.class.getSimpleName();
+	
+	private ArrayAdapter<String> contactsArrayAdapter;
 	
 	private ITodoItemCRUDOperations crudOperations;
 	private TodoItem item;
+	
+	private List<String> contacts = new ArrayList<>();
 	
 	final Calendar myCalendar = Calendar.getInstance();
 	
@@ -67,6 +83,18 @@ public class DetailviewActivity extends AppCompatActivity {
 		deleteButton = findViewById(R.id.deleteButton);
 		deleteButton.setOnClickListener((view) -> {
 			openDeleteAlertDialog();
+		});
+		
+		contactList = (ListView) findViewById(R.id.contactList);
+		
+		contactsArrayAdapter = createContactListAdapter();
+		((ListView) contactList).setAdapter(contactsArrayAdapter);
+		((ListView) contactList).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				String clickedItem = contactsArrayAdapter.getItem(position);
+				Log.i(LOGGING_TAG, "contact name " + clickedItem);
+			}
 		});
 		
 		todoTitle = findViewById(R.id.todoTitle);
@@ -149,6 +177,7 @@ public class DetailviewActivity extends AppCompatActivity {
 						
 						String todoTimeAsString = tf.format(new Date(this.item.getExpiry()));
 						todoTime.setText(todoTimeAsString);
+						((ListView) contactList).setAdapter(contactsArrayAdapter);
 					});
 				}
 			}).start();
@@ -160,6 +189,25 @@ public class DetailviewActivity extends AppCompatActivity {
 				});
 			}).start();
 		}
+	}
+	
+	private ArrayAdapter<String> createContactListAdapter() {
+		return new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts) {
+			@NonNull
+			@Override
+			public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+				View contactView = convertView;
+				if (contactView == null) {
+					contactView = getLayoutInflater().inflate(R.layout.activity_detailview_contactitem, null);
+				}
+				TextView contactNameView = contactView.findViewById(R.id.contact);
+				String currentItem = getItem(position);
+				
+				
+				contactNameView.setText(currentItem);
+				return contactView;
+			}
+		};
 	}
 	
 	private void setTodoDateToToday() {
@@ -187,6 +235,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		this.item.setDone(this.todoDone.isChecked());
 		this.item.setFavourite(this.todoFavourite.isChecked());
 		this.item.setExpiry(myCalendar.getTimeInMillis());
+		this.item.setContacts(contacts);
 		
 		if (create) {
 			new Thread(() -> {
@@ -201,6 +250,14 @@ public class DetailviewActivity extends AppCompatActivity {
 				setResult(STATUS_EDITED, returnIntent);
 				finish();
 			});
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == CALL_CONTACT_PICKER && resultCode == Activity.RESULT_OK) {
+			Log.i(getClass().getSimpleName(), "got intent from contact picker: " + data);
+			showContactDetails(data.getData());
 		}
 	}
 	
@@ -241,8 +298,63 @@ public class DetailviewActivity extends AppCompatActivity {
 		if (item.getItemId() == R.id.saveItem) {
 			saveItem();
 			return true;
+		} else if (item.getItemId() == R.id.showContacts) {
+			showContacts();
+			return true;
+		} 
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private void showContacts() {
+		Intent contactsIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+		startActivityForResult(contactsIntent, CALL_CONTACT_PICKER);
+	}
+	
+	private void showContactDetails(Uri contactUri) {
+		Log.i(LOGGING_TAG, "got contact uri: " + contactUri);
+		Cursor contactsCursor = getContentResolver().query(contactUri, null, null, null, null);
+		if (contactsCursor.moveToFirst()) {
+			String contactName = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
+			Log.i(LOGGING_TAG, "contact name " + contactName);
+			Log.i(LOGGING_TAG, "contact id" + contactId);
+			
+			contactsArrayAdapter.add(contactId);
+			
+			if (verifyReadContactsPermission()) {
+				
+				Cursor phoneCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[]{contactId}, null);
+				
+				while (phoneCursor.moveToNext()) {
+					String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+					int phoneNumberType = phoneCursor.getInt(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA2));
+					
+					Log.i(LOGGING_TAG, "phone number " + phoneNumber);
+					Log.i(LOGGING_TAG, "phone number type " + phoneNumberType);
+					
+					if (phoneNumberType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
+						Log.i(LOGGING_TAG, "found mobile phone number!: " + phoneNumber);
+					}
+				}
+				
+				Cursor mailCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{contactId}, null);
+				
+				while (mailCursor.moveToNext()) {
+					String mail = mailCursor.getString(mailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+					
+					Log.i(LOGGING_TAG, "mail " + mail);
+				}
+			}
+		}
+	}
+	
+	private boolean verifyReadContactsPermission() {
+		int hasReadContactsPermission = checkSelfPermission(Manifest.permission.READ_CONTACTS);
+		if (hasReadContactsPermission == PackageManager.PERMISSION_GRANTED) {
+			return true;
 		} else {
-			return super.onOptionsItemSelected(item);
+			requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 4);
+			return false;
 		}
 	}
 }

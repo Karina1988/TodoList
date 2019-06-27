@@ -1,10 +1,14 @@
 package de.karina.todolist.model;
 
+import android.widget.ArrayAdapter;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 import com.google.gson.annotations.SerializedName;
+import de.karina.todolist.ListToStringTypeConverters;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class TodoItem implements Serializable {
@@ -21,6 +25,9 @@ public class TodoItem implements Serializable {
 	
 	@SerializedName("expiry")
 	private long expiry;
+	
+	@TypeConverters(ListToStringTypeConverters.class)
+	private List<String> contacts;
 	
 	public TodoItem() {
 	}
@@ -75,6 +82,14 @@ public class TodoItem implements Serializable {
 	
 	public void setExpiry(long expiry) {
 		this.expiry = expiry;
+	}
+	
+	public List<String> getContacts() {
+		return contacts;
+	}
+	
+	public void setContacts(List<String> contacts) {
+		this.contacts = contacts;
 	}
 	
 	@Override

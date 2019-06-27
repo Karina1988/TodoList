@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "786f31b3a295a64727893a1a14654117",
+    "identityHash": "2c454ae85c62f4008407aeb9d5b28b24",
     "entities": [
       {
         "tableName": "TodoItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `done` INTEGER, `favorite` INTEGER, `dueDate` INTEGER, `dueTime` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `done` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `expiry` INTEGER NOT NULL, `contacts` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -30,24 +30,24 @@
             "fieldPath": "done",
             "columnName": "done",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "favorite",
-            "columnName": "favorite",
+            "fieldPath": "favourite",
+            "columnName": "favourite",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "dueDate",
-            "columnName": "dueDate",
+            "fieldPath": "expiry",
+            "columnName": "expiry",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "dueTime",
-            "columnName": "dueTime",
-            "affinity": "INTEGER",
+            "fieldPath": "contacts",
+            "columnName": "contacts",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -64,7 +64,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"786f31b3a295a64727893a1a14654117\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2c454ae85c62f4008407aeb9d5b28b24\")"
     ]
   }
 }
