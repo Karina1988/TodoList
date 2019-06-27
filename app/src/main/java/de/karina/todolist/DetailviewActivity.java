@@ -178,7 +178,9 @@ public class DetailviewActivity extends AppCompatActivity {
 						String todoTimeAsString = tf.format(new Date(this.item.getExpiry()));
 						todoTime.setText(todoTimeAsString);
 						
+						if (this.item.getContacts() != null) {
 						this.contactsArrayAdapter.addAll(this.item.getContacts());
+						}
 					});
 				}
 			}).start();
@@ -319,7 +321,9 @@ public class DetailviewActivity extends AppCompatActivity {
 			Log.i(LOGGING_TAG, "contact name " + contactName);
 			Log.i(LOGGING_TAG, "contact id" + contactId);
 			
+			if (!contactExistsForItem(contactId)) {
 			contactsArrayAdapter.add(contactId);
+			}
 			
 			if (verifyReadContactsPermission()) {
 				
@@ -356,5 +360,15 @@ public class DetailviewActivity extends AppCompatActivity {
 			requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 4);
 			return false;
 		}
+	}
+	
+	private boolean contactExistsForItem(String contactId) {
+		for(int i=0; i<contactsArrayAdapter.getCount(); i++){
+			String contact = contactsArrayAdapter.getItem(i);
+			if (((contact).equals(contactId))) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
