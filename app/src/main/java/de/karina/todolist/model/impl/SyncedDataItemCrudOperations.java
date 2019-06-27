@@ -57,6 +57,6 @@ public class SyncedDataItemCrudOperations implements ITodoItemCRUDOperations {
 	
 	@Override
 	public boolean authenticateUser(User user) {
-		return false;
+		return "s@bht.de".equals(user.getEmail()) && "000000".equals(user.getPwd());
 	}
 }
