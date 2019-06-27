@@ -77,6 +77,15 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		}
 	}
 	
+	public boolean deleteAllItems() {
+		try {
+			return webAPIClient.deleteAllItems().execute().body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	@Override
 	public boolean authenticateUser(User user) {
 		return "s@bht.de".equals(user.getEmail()) && "000000".equals(user.getPwd());
@@ -99,10 +108,10 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		@DELETE("api/todos/{itemId}")
 		public Call<Boolean> deleteItem(@Path("itemId")long id);
 		
+		@DELETE("api/todos")
+		public Call<Boolean> deleteAllItems();
+		
 		@PUT("/api/users/auth")
 		public Call<Boolean> authenticateUser(@Body User user);
-		
-		@DELETE("api/todos")
-		public Call<Boolean> deleteAllTodos();
 	}
 }
