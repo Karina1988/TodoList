@@ -3,7 +3,6 @@ package de.karina.todolist;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -191,13 +190,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 	}
 
 	private boolean isEmailValid(String email) {
-		//TODO: Replace this with your own logic
 		return email.contains("@");
 	}
 
 	private boolean isPasswordValid(String password) {
-		//TODO: Replace this with your own logic
-		return password.length() > 4;
+		return password.length() == 6;
 	}
 
 	/**
