@@ -13,11 +13,12 @@
 	<!-- Strings related to login -->
 	<string name="prompt_email">E-Mail</string>
 	<string name="prompt_password">Passwort</string>
-	<string name="action_sign_in">EInloggen oder registrieren</string>
+	<string name="action_sign_in">Einloggen</string>
 	<string name="action_sign_in_short">Einloggen</string>
 	<string name="error_invalid_email">Die E-Mail-Adresse ist ungültig</string>
 	<string name="error_invalid_password">Das Passwort ist zu kurz</string>
 	<string name="error_incorrect_password">Das Passwort ist falsch.</string>
 	<string name="error_field_required">Dies ist ein Pflichtfeld</string>
 	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+	<string name="contacts">Kontakte</string>
 </resources>

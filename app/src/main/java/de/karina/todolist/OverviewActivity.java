@@ -1,6 +1,12 @@
 package de.karina.todolist;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +30,10 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	public static final int CALL_DETAILVIEW_FOR_CREATE = 0;
 	public static final int CALL_DETAILVIEW_FOR_EDIT = 1;
+	public static final int CALL_CONTACT_PICKER = 2;
+	
+	private static final String LOGGING_TAG = OverviewActivity.class.getSimpleName();
+	
 	private ViewGroup todoList;
 	private ArrayAdapter<TodoItem> todoListArrayAdapter;
 	private FloatingActionButton addItemButton;
@@ -176,6 +186,9 @@ public class OverviewActivity extends AppCompatActivity {
 				});
 				Toast.makeText(OverviewActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
 			}
+		} else if (requestCode == CALL_CONTACT_PICKER && resultCode == Activity.RESULT_OK) {
+			Log.i(getClass().getSimpleName(), "got intent from contact picker: " + data);
+			showContactDetails(data.getData());
 		} else {
 			updateSortAndFocusItem(null);
 		}
@@ -222,8 +235,55 @@ public class OverviewActivity extends AppCompatActivity {
 			sortModus = 2;
 			sortItemsByDate();
 			return true;
-		} else {
+		} else if (item.getItemId() == R.id.showContacts) {
+			showContacts();
+			return true;
+		} 
 		return super.onOptionsItemSelected(item);
 	}
+	
+	private void showContacts() {
+		Intent contactsIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+		startActivityForResult(contactsIntent, CALL_CONTACT_PICKER);
+	}
+	
+	private void showContactDetails(Uri contactUri) {
+		Log.i(LOGGING_TAG, "got contact uri: " + contactUri);
+		Cursor contactsCursor = getContentResolver().query(contactUri, null, null, null, null);
+		if (contactsCursor.moveToFirst()) {
+			String contactName = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
+			Log.i(LOGGING_TAG, "contact name " + contactName);
+			Log.i(LOGGING_TAG, "contact id" + contactId);
+			
+			if (verifyReadContactsPermission()) {
+				
+				Cursor phoneCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[]{contactId}, null);
+				
+				while (phoneCursor.moveToNext()) {
+					String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+					int phoneNumberType = phoneCursor.getInt(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA2));
+					
+					Log.i(LOGGING_TAG, "phone number " + phoneNumber);
+					Log.i(LOGGING_TAG, "phone number type " + phoneNumberType);
+					
+					if (phoneNumberType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
+						Log.i(LOGGING_TAG, "found mobile phone number!: " + phoneNumber);
+					}
+				}
+				//content uri for email: ContactsContract.CommomDataKinds.Email.CONTENT_URI
+				//column for email address: ContactsContract.CommonDataKinds.Email.ADDRESS
+			}
+		}
+	}
+	
+	private boolean verifyReadContactsPermission() {
+		int hasReadContactsPermission = checkSelfPermission(Manifest.permission.READ_CONTACTS);
+		if (hasReadContactsPermission == PackageManager.PERMISSION_GRANTED) {
+			return true;
+		} else {
+			requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 4);
+			return false;
+		}
 	}
 }
