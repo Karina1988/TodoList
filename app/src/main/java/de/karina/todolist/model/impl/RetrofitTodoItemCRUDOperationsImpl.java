@@ -77,6 +77,7 @@ public class RetrofitTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperatio
 		}
 	}
 	
+	@Override
 	public boolean deleteAllItems() {
 		try {
 			return webAPIClient.deleteAllItems().execute().body();

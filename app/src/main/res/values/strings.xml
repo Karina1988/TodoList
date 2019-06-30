@@ -10,6 +10,12 @@
 	<string name="sortByDate">Sortieren nach Datum</string>
 	<string name="sortByFavorite">Sortieren nach Wichtigkeit</string>
 	<string name="title_activity_login">Einloggen</string>
+	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+	<string name="contacts">Kontakte</string>
+	<string name="deleteLocal">Lösche lokal</string>
+	<string name="deleteRemote">Lösche remote</string>
+	<string name="synchronize">Synchronisiere</string>
+	<string name="deleteItem">Eintrag löschen</string>
 	<!-- Strings related to login -->
 	<string name="prompt_email">E-Mail</string>
 	<string name="prompt_password">Passwort</string>
@@ -19,6 +25,5 @@
 	<string name="error_invalid_password">Das Passwort ist zu kurz</string>
 	<string name="error_incorrect_password">Das Passwort ist falsch.</string>
 	<string name="error_field_required">Dies ist ein Pflichtfeld</string>
-	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-	<string name="contacts">Kontakte</string>
+	<string name="sureDeleteItem">Sind Sie sicher, dass Sie den Eintrag löschen möchten?</string>
 </resources>

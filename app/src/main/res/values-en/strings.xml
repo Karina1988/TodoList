@@ -21,4 +21,9 @@
 	<string name="error_field_required">This field is required</string>
 	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 	<string name="contacts">Contacts</string>
+	<string name="deleteLocal">Delete local</string>
+	<string name="deleteRemote">Delete remote</string>
+	<string name="synchronize">Synchronize</string>
+	<string name="sureDeleteItem">Are you sure you want to delete this item?</string>
+	<string name="deleteItem">Delete item</string>
 </resources>

@@ -53,6 +53,12 @@ public class RoomTodoItemCRUDOperationsImpl implements ITodoItemCRUDOperations {
 	}
 	
 	@Override
+	public boolean deleteAllItems() {
+		todoItemDao.deleteAll();
+		return true;
+	}
+	
+	@Override
 	public boolean authenticateUser(User user) {
 		return "s@bht.de".equals(user.getEmail()) && "000000".equals(user.getPwd());
 	}

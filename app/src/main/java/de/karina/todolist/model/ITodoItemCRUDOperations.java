@@ -14,5 +14,7 @@ public interface ITodoItemCRUDOperations {
 	
 	public boolean deleteItem(long id);
 	
+	public boolean deleteAllItems();
+	
 	public boolean authenticateUser(User user);
 }

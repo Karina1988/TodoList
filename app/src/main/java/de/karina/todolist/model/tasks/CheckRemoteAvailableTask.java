@@ -15,7 +15,7 @@ public class CheckRemoteAvailableTask extends AsyncTask<Void,Void,Boolean> {
 	@Override
 	protected Boolean doInBackground(Void... voids) {
 		try {
-			HttpURLConnection connection = (HttpURLConnection)new URL("http://10.0.0.2:8080/api/todos").openConnection();
+			HttpURLConnection connection = (HttpURLConnection)new URL("http://10.0.2.2:8080/api/todos").openConnection();
 			connection.setReadTimeout(1000);
 			connection.setConnectTimeout(1500);
 			connection.setRequestMethod("GET");

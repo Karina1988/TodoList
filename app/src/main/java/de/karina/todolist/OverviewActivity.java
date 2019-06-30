@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import de.karina.todolist.model.IAfterTask;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
+import de.karina.todolist.model.impl.RoomTodoItemCRUDOperationsImpl;
+import de.karina.todolist.model.impl.SyncedDataItemCrudOperations;
 import de.karina.todolist.model.tasks.*;
 
 import java.text.DateFormat;
@@ -70,16 +73,20 @@ public class OverviewActivity extends AppCompatActivity {
 		});
 		
 		new CheckRemoteAvailableTask().run(available -> {
-			((TodoItemApplication)getApplication()).setRemoteCRUDMode(available);
+			TodoItemApplication todoItemApplication = (TodoItemApplication)getApplication();
+			todoItemApplication.setRemoteCRUDMode(available);
+			
+			//initialise the view with data
+			this.crudOperations = todoItemApplication.getCRUDOperations();
+			
+			new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
+				todoListArrayAdapter.addAll(items);
+				updateSortAndFocusItem(null);
+				synchronizeItems();
+			});
+			
 		});
 		
-		//initialise the view with data
-		this.crudOperations = ((TodoItemApplication)getApplication()).getCRUDOperations();
-		
-		new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
-			todoListArrayAdapter.addAll(items);
-			updateSortAndFocusItem(null);
-		});
 	}
 	
 	private ArrayAdapter<TodoItem> createListviewAdapter() {
@@ -172,9 +179,11 @@ public class OverviewActivity extends AppCompatActivity {
 				});
 			} else if (resultCode == DetailviewActivity.STATUS_DELETED) {
 				long itemId = data.getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1);
-				new DeleteItemTask(this.crudOperations).run(itemId, item -> {
-					this.items.removeIf(currentItem -> currentItem.getId() == itemId);
-					updateSortAndFocusItem(null);
+				new DeleteItemTask(this.crudOperations).run(itemId, success -> {
+					if (success) {
+						this.items.removeIf(currentItem -> currentItem.getId() == itemId);
+						updateSortAndFocusItem(null);
+					}
 				});
 				Toast.makeText(OverviewActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
 			}
@@ -208,6 +217,73 @@ public class OverviewActivity extends AppCompatActivity {
 		this.todoListArrayAdapter.sort(dateComparator);
 	}
 	
+	private void deleteAllItemsLocal() {
+		ITodoItemCRUDOperations target = crudOperations;
+		if(crudOperations instanceof SyncedDataItemCrudOperations) {
+			// Set target to local crud of synced operations
+			target = ((SyncedDataItemCrudOperations) crudOperations).getLocalCRUD();
+		}
+		new DeleteAllItemsTask(target).run(success -> {
+			if (success) {
+				todoListArrayAdapter.clear();
+				Toast.makeText(OverviewActivity.this, "All local items deleted", Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
+	private void deleteAllItemsRemote() {
+		deleteAllItemsRemote(null, true);
+	}
+	
+	private void deleteAllItemsRemote(IAfterTask afterDeletion, boolean showToast) {
+		if(crudOperations instanceof SyncedDataItemCrudOperations) {
+			ITodoItemCRUDOperations target =( (SyncedDataItemCrudOperations)crudOperations).getRemoteCRUD();
+			new DeleteAllItemsTask(target).run(success -> {
+				if (success && showToast) {
+					Toast.makeText(OverviewActivity.this, "All remote items deleted", Toast.LENGTH_SHORT).show();
+				}
+				if (afterDeletion != null) {
+					afterDeletion.run(success);
+				} 
+			});
+		}
+	}
+	
+	private void synchronizeItems() {
+		if (!(crudOperations instanceof SyncedDataItemCrudOperations)) {
+			return;
+		}
+		if (todoListArrayAdapter.getCount() > 0) {
+			deleteAllItemsRemote((boolean successful) -> {
+				if (successful) {
+					ITodoItemCRUDOperations remoteCrudOpertaions = ((SyncedDataItemCrudOperations) crudOperations).getRemoteCRUD();
+					new Thread(() -> {
+						for (int i = 0; i < todoListArrayAdapter.getCount(); i++) {
+							remoteCrudOpertaions.createItem(todoListArrayAdapter.getItem(i));
+						}
+					}).start();
+					Toast.makeText(OverviewActivity.this, "Remote items synchronized", Toast.LENGTH_SHORT).show();
+				}
+			}, false);
+		} else {
+			ITodoItemCRUDOperations localCrudOperations = ((SyncedDataItemCrudOperations) crudOperations).getLocalCRUD();
+			ITodoItemCRUDOperations remoteCrudOperations = ((SyncedDataItemCrudOperations) crudOperations).getRemoteCRUD();
+
+			new ReadAllItemsTask(remoteCrudOperations, this.progressBar).run(items -> {
+				new Thread(() -> {
+					for (int i = 0; i < items.size(); i++) {
+						localCrudOperations.createItem(items.get(i));
+					}
+				}).start();
+				todoListArrayAdapter.addAll(items);
+				Toast.makeText(OverviewActivity.this, "Local items synchronized", Toast.LENGTH_SHORT).show();
+			});
+		}
+		// prüfe, ob lokale todos vorhanden. 
+		// wenn ja: lösche alle todos remote und füge die lokalen todos remote hinzu
+		// wenn nein, übertrage alle remote todos auf lokale datenbank
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.overview_menu, menu);
@@ -224,7 +300,16 @@ public class OverviewActivity extends AppCompatActivity {
 			sortModus = 2;
 			sortItemsByDate();
 			return true;
-		} 
+		} else if (item.getItemId() == R.id.deleteLocal) {
+			deleteAllItemsLocal();
+			return true;
+		} else if (item.getItemId() == R.id.deleteRemote) {
+			deleteAllItemsRemote();
+			return true;
+		} else if (item.getItemId() == R.id.synchronize) {
+			synchronizeItems();
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 }

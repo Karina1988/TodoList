@@ -265,8 +265,8 @@ public class DetailviewActivity extends AppCompatActivity {
 	
 	private void openDeleteAlertDialog() {
 		new AlertDialog.Builder(this)
-			.setTitle("Delete item")
-			.setMessage("Are you sure you want to delete this item?")
+			.setTitle(R.string.deleteItem)
+			.setMessage(R.string.sureDeleteItem)
 			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					deleteItem();
@@ -278,12 +278,11 @@ public class DetailviewActivity extends AppCompatActivity {
 	}
 	
 	private void deleteItem() {
-		new DeleteItemTask(crudOperations).run(item.getId(), deleted -> {
 			Intent returnIntent = new Intent();
 			returnIntent.putExtra(ARG_ITEM_ID, item.getId());
 			setResult(STATUS_DELETED, returnIntent);
 			finish();
-		});
+	}
 	}
 	
 	@Override

@@ -20,6 +20,9 @@ public interface TodoItemDao {
 	@Delete
 	public void delete(TodoItem item);
 	
+	@Query("delete from todoitem")
+	public void deleteAll();
+	
 	@Update
 	public void update(TodoItem item);
 }

@@ -11,11 +11,18 @@ public class SyncedDataItemCrudOperations implements ITodoItemCRUDOperations {
 	private ITodoItemCRUDOperations remoteCRUD;
 	private ITodoItemCRUDOperations localCRUD;
 	
+	public ITodoItemCRUDOperations getRemoteCRUD() {
+		return remoteCRUD;
+	}
+	
+	public ITodoItemCRUDOperations getLocalCRUD() {
+		return localCRUD;
+	}
+	
 	public SyncedDataItemCrudOperations(ITodoItemCRUDOperations localCRUD, ITodoItemCRUDOperations remoteCRUD) {
 		this.localCRUD = localCRUD;
 		this.remoteCRUD = remoteCRUD;
 	}
-	
 	
 	@Override
 	public TodoItem createItem(TodoItem item) {
@@ -50,6 +57,15 @@ public class SyncedDataItemCrudOperations implements ITodoItemCRUDOperations {
 	public boolean deleteItem(long id) {
 		if (localCRUD.deleteItem(id)) {
 			remoteCRUD.deleteItem(id);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean deleteAllItems() {
+		if (localCRUD.deleteAllItems()) {
+			remoteCRUD.deleteAllItems();
 			return true;
 		}
 		return false;

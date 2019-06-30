@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-	<item android:title="@string/sortByFavorite" android:id="@+id/sortItemsByFavorite"></item>
-	<item android:title="@string/sortByDate" android:id="@+id/sortItemsByDate"></item>
+
+	<item
+		android:id="@+id/sorting"
+		android:title="Sorting"
+		android:icon="@drawable/baseline_sort_white_24dp"
+		app:showAsAction="ifRoom">
+		<menu>
+			<item android:title="@string/sortByFavorite" android:id="@+id/sortItemsByFavorite"></item>
+			<item android:title="@string/sortByDate" android:id="@+id/sortItemsByDate"></item>
+		</menu>
+	</item>
+	<item
+		android:id="@+id/settings"
+		android:title="Settings"
+		android:icon="@drawable/baseline_settings_white_24dp"
+		app:showAsAction="ifRoom">
+		<menu>
+			<item android:title="@string/deleteLocal" android:id="@+id/deleteLocal"></item>
+			<item android:title="@string/deleteRemote" android:id="@+id/deleteRemote"></item>
+			<item android:title="@string/synchronize" android:id="@+id/synchronize"></item>
+		</menu>
+
+	</item>
+
 </menu>
