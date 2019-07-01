@@ -91,6 +91,9 @@
 
 	<ListView
 			android:id="@+id/contactList"
+			android:padding="10dp"
+			app:hintEnabled="true"
+			android:hint="zugewiesene Kontakte"
 			app:layout_constraintTop_toBottomOf="@+id/todoTimeWrapper"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"></ListView>

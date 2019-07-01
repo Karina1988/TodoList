@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,13 +90,6 @@ public class DetailviewActivity extends AppCompatActivity {
 		
 		contactsArrayAdapter = createContactListAdapter();
 		((ListView) contactList).setAdapter(contactsArrayAdapter);
-		((ListView) contactList).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				String clickedItem = contactsArrayAdapter.getItem(position);
-				Log.i(LOGGING_TAG, "contact name " + clickedItem);
-			}
-		});
 		
 		todoTitle = findViewById(R.id.todoTitle);
 		todoDescription = findViewById(R.id.todoDescription);
@@ -147,20 +141,6 @@ public class DetailviewActivity extends AppCompatActivity {
 			}
 		});
 		
-//		todoTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//			@Override
-//			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-//				if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
-//					if (textView.getText().length() > 0) {
-//						saveButtoninOptions.setEnabled(true);
-//						saveButtoninOptions.getIcon().setAlpha(255);
-//						return true;
-//					}
-//				}
-//				return false;
-//			}
-//		});
-		
 		long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
 		if (itemId != -1) {
 			new Thread(() -> {
@@ -179,7 +159,7 @@ public class DetailviewActivity extends AppCompatActivity {
 						todoTime.setText(todoTimeAsString);
 						
 						if (this.item.getContacts() != null) {
-						this.contactsArrayAdapter.addAll(this.item.getContacts());
+							this.contactsArrayAdapter.addAll(this.item.getContacts());
 						}
 					});
 				}
@@ -204,9 +184,24 @@ public class DetailviewActivity extends AppCompatActivity {
 					contactView = getLayoutInflater().inflate(R.layout.activity_detailview_contactitem, null);
 				}
 				TextView contactNameView = contactView.findViewById(R.id.contact);
-				String currentItem = getItem(position);
+				ImageButton contactDeleteButton = contactView.findViewById(R.id.deleteContactButton);
+				ImageButton contactSMSButton = contactView.findViewById(R.id.contactSMS);
+				ImageButton contactMailButton = contactView.findViewById(R.id.contactMail);
 				
-				contactNameView.setText(currentItem);
+				String contactId = getItem(position);
+				
+				contactNameView.setText(getContactNameFromId(contactId));
+				
+				contactDeleteButton.setOnClickListener((view) -> {
+					deleteContactFromItem(contactId);
+				});
+				contactSMSButton.setOnClickListener((view) -> {
+					sendSMSToContact(contactId);
+				});
+				contactMailButton.setOnClickListener((view) -> {
+					sendMailToContact(contactId);
+				});
+				
 				return contactView;
 			}
 		};
@@ -278,19 +273,38 @@ public class DetailviewActivity extends AppCompatActivity {
 	}
 	
 	private void deleteItem() {
-			Intent returnIntent = new Intent();
-			returnIntent.putExtra(ARG_ITEM_ID, item.getId());
-			setResult(STATUS_DELETED, returnIntent);
-			finish();
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(ARG_ITEM_ID, item.getId());
+		setResult(STATUS_DELETED, returnIntent);
+		finish();
 	}
+	
+	private void deleteContactFromItem(String position) {
+		Toast.makeText(DetailviewActivity.this, getString(R.string.contact) + " " + getContactNameFromId(position) + " " + getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+		contactsArrayAdapter.remove(position);
+	}
+	
+	private void sendSMSToContact(String contactId) {
+		if (verifySendSMSPermission()) {
+			Uri uri = Uri.parse("smsto:" + getContactPhoneNumberFromId(contactId));
+			Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
+			smsIntent.putExtra("sms_body", this.item.getName() + this.item.getDescription());
+			startActivity(smsIntent);
+		}
+	}
+	
+	private void sendMailToContact(String contactId) {
+		Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
+		mailIntent.setData(Uri.parse("mailto:" + getContactMailFromId(contactId)));
+		mailIntent.putExtra(Intent.EXTRA_SUBJECT, this.item.getName());
+		mailIntent.putExtra(Intent.EXTRA_TEXT, this.item.getDescription());
+		startActivity(mailIntent);
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.detailview_menu, menu);
 		saveButtoninOptions = menu.findItem(R.id.saveItem);
-//		saveButtoninOptions.setEnabled(false);
-//		saveButtoninOptions.getIcon().setAlpha(255);
 		return true;
 	}
 	
@@ -311,6 +325,44 @@ public class DetailviewActivity extends AppCompatActivity {
 		startActivityForResult(contactsIntent, CALL_CONTACT_PICKER);
 	}
 	
+	private Uri getContactUriFromId(String contactId) {
+		Uri myPhoneUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, "" + contactId);
+		return myPhoneUri;
+	}
+	
+	private String getContactNameFromId(String contactId) {
+		Cursor phoneCursor = managedQuery(getContactUriFromId(contactId), null, null, null, null);
+		
+		if (phoneCursor.moveToFirst()) {
+			String contactName = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			return contactName;
+		}
+		return null;
+	}
+	private String getContactPhoneNumberFromId(String contactId) {
+		Cursor phoneCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[]{contactId}, null);
+		
+		while (phoneCursor.moveToNext()) {
+			String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+			int phoneNumberType = phoneCursor.getInt(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA2));
+			
+			if (phoneNumberType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
+				Log.i(LOGGING_TAG, "phone number " + phoneNumber);
+				return phoneNumber;
+			}
+		}
+		return null;
+	}
+	private String getContactMailFromId(String contactId) {
+		Cursor mailCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{contactId}, null);
+		
+		if (mailCursor.moveToFirst()) {
+			String contactMail = mailCursor.getString(mailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+			return contactMail;
+		}
+		return null;
+	}
+	
 	private void showContactDetails(Uri contactUri) {
 		Log.i(LOGGING_TAG, "got contact uri: " + contactUri);
 		Cursor contactsCursor = getContentResolver().query(contactUri, null, null, null, null);
@@ -321,7 +373,7 @@ public class DetailviewActivity extends AppCompatActivity {
 			Log.i(LOGGING_TAG, "contact id" + contactId);
 			
 			if (!contactExistsForItem(contactId)) {
-			contactsArrayAdapter.add(contactId);
+				contactsArrayAdapter.add(contactId);
 			}
 			
 			if (verifyReadContactsPermission()) {
@@ -357,6 +409,16 @@ public class DetailviewActivity extends AppCompatActivity {
 			return true;
 		} else {
 			requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 4);
+			return false;
+		}
+	}
+	
+	private boolean verifySendSMSPermission() {
+		int hasSendSMSPermission = checkSelfPermission(Manifest.permission.SEND_SMS);
+		if (hasSendSMSPermission == PackageManager.PERMISSION_GRANTED) {
+			return true;
+		} else {
+			requestPermissions(new String[]{Manifest.permission.SEND_SMS}, 4);
 			return false;
 		}
 	}
