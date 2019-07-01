@@ -9,12 +9,29 @@
 
 	<TextView
 			android:id="@+id/contact"
-			android:padding="10dp"
-			android:layout_width="320dp"
+			android:paddingBottom="10dp"
+			android:paddingTop="10dp"
+			android:layout_width="300dp"
 			android:layout_height="wrap_content"/>
 	<ImageButton
 			android:layout_height="wrap_content"
-			app:srcCompat="@drawable/baseline_clear_black_24dp"
+			app:srcCompat="@drawable/baseline_sms_black_24dp"
+			android:id="@+id/contactSMS"
+			android:layout_weight="0"
+			android:paddingRight="10dp"
+			android:background="@null"
+			android:layout_width="wrap_content"/>
+	<ImageButton
+			android:layout_height="wrap_content"
+			app:srcCompat="@drawable/baseline_mail_black_24dp"
+			android:id="@+id/contactMail"
+			android:layout_weight="0"
+			android:paddingRight="10dp"
+			android:background="@null"
+			android:layout_width="wrap_content"/>
+	<ImageButton
+			android:layout_height="wrap_content"
+			app:srcCompat="@drawable/baseline_delete_black_24dp"
 			android:id="@+id/deleteContactButton"
 			android:layout_weight="0"
 			android:background="@null"
