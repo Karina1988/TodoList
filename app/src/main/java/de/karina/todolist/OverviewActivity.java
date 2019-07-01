@@ -1,9 +1,8 @@
 package de.karina.todolist;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import de.karina.todolist.model.IAfterTask;
 import de.karina.todolist.model.ITodoItemCRUDOperations;
 import de.karina.todolist.model.TodoItem;
-import de.karina.todolist.model.impl.RoomTodoItemCRUDOperationsImpl;
 import de.karina.todolist.model.impl.SyncedDataItemCrudOperations;
 import de.karina.todolist.model.tasks.*;
 
@@ -39,7 +37,15 @@ public class OverviewActivity extends AppCompatActivity {
 	
 	private List<TodoItem> items = new ArrayList<>();
 	
-	private Comparator<TodoItem> doneComparator = (l,r) -> Boolean.valueOf(l.isDone()).compareTo(r.isDone());
+	private Comparator<TodoItem> doneComparator = (l,r) -> {
+		if (l.isDone() == r.isDone()) {
+			return 0;
+		} else if (!l.isDone() && r.isDone()) {
+			return -1;
+		} else {
+			return 1;
+		}
+	};
 	private Comparator<TodoItem> favoriteComparator = (l,r) -> Boolean.valueOf(r.isFavourite()).compareTo(l.isFavourite());
 	private Comparator<TodoItem> dateComparator = (l,r) -> Long.valueOf(l.getExpiry()).compareTo(r.getExpiry());
 	
@@ -73,10 +79,14 @@ public class OverviewActivity extends AppCompatActivity {
 		});
 		
 		new CheckRemoteAvailableTask().run(available -> {
+//			intent zu loginactivity todo
+//			Intent loginIntent = new Intent(this, LoginActivity.class);
+//			startActivity(loginIntent);
+			
 			TodoItemApplication todoItemApplication = (TodoItemApplication)getApplication();
 			todoItemApplication.setRemoteCRUDMode(available);
 			
-			//initialise the view with data
+			//initialise the view with data 
 			this.crudOperations = todoItemApplication.getCRUDOperations();
 			
 			new ReadAllItemsTask(this.crudOperations, this.progressBar).run(items -> {
@@ -111,6 +121,11 @@ public class OverviewActivity extends AppCompatActivity {
 				String todoDateAsString = df.format(date);
 				todoDate.setText(todoDateAsString);
 				
+				Date currentTime = new Date();
+				if (date.before(currentTime)) {
+					todoTitleView.setTextColor(Color.RED);
+				}
+				
 				//remove listener before setChecked status in order to avoid problems when recycling the view
 				itemReadyView.setOnCheckedChangeListener(null);
 				itemReadyView.setChecked(currentItem.isDone());
@@ -121,9 +136,9 @@ public class OverviewActivity extends AppCompatActivity {
 						updateSortAndFocusItem(null);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							if (currentItem.isDone()) {
-								Toast.makeText(OverviewActivity.this, "Set item with name " + currentItem.getName() + " as done", Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + " " + getString(R.string.setDone), Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(OverviewActivity.this, "Unset item with name " + currentItem.getName() + " as done", Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setUndone), Toast.LENGTH_SHORT).show();
 							}
 						});
 					}
@@ -139,9 +154,9 @@ public class OverviewActivity extends AppCompatActivity {
 						updateSortAndFocusItem(null);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							if (currentItem.isFavourite()) {
-								Toast.makeText(OverviewActivity.this, "Marked item with name " + currentItem.getName() + " as favorite.", Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setFavorite), Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(OverviewActivity.this, "Unmarked item with name " + currentItem.getName() + " as favorite.", Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setNotFavorite), Toast.LENGTH_SHORT).show();
 							}
 						});
 					}
@@ -185,7 +200,7 @@ public class OverviewActivity extends AppCompatActivity {
 						updateSortAndFocusItem(null);
 					}
 				});
-				Toast.makeText(OverviewActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+				Toast.makeText(OverviewActivity.this, R.string.itemDeleted, Toast.LENGTH_SHORT).show();
 			}
 		} else {
 			updateSortAndFocusItem(null);
@@ -195,8 +210,10 @@ public class OverviewActivity extends AppCompatActivity {
 	private void updateSortAndFocusItem(TodoItem item) {
 		if (sortModus == 1) {
 			sortItemsByFavorite();
+			sortItemByDoneStatus();
 		} else if (sortModus == 2) {
 			sortItemsByDate();
+			sortItemByDoneStatus();
 		} else {
 			sortItemByDoneStatus();
 		}
@@ -226,7 +243,7 @@ public class OverviewActivity extends AppCompatActivity {
 		new DeleteAllItemsTask(target).run(success -> {
 			if (success) {
 				todoListArrayAdapter.clear();
-				Toast.makeText(OverviewActivity.this, "All local items deleted", Toast.LENGTH_SHORT).show();
+				Toast.makeText(OverviewActivity.this, getString(R.string.localItemsDeleted), Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -240,7 +257,7 @@ public class OverviewActivity extends AppCompatActivity {
 			ITodoItemCRUDOperations target =( (SyncedDataItemCrudOperations)crudOperations).getRemoteCRUD();
 			new DeleteAllItemsTask(target).run(success -> {
 				if (success && showToast) {
-					Toast.makeText(OverviewActivity.this, "All remote items deleted", Toast.LENGTH_SHORT).show();
+					Toast.makeText(OverviewActivity.this, getString(R.string.remoteItemsDeleted), Toast.LENGTH_SHORT).show();
 				}
 				if (afterDeletion != null) {
 					afterDeletion.run(success);
@@ -262,7 +279,7 @@ public class OverviewActivity extends AppCompatActivity {
 							remoteCrudOpertaions.createItem(todoListArrayAdapter.getItem(i));
 						}
 					}).start();
-					Toast.makeText(OverviewActivity.this, "Remote items synchronized", Toast.LENGTH_SHORT).show();
+					Toast.makeText(OverviewActivity.this, R.string.synchronizedRemote, Toast.LENGTH_SHORT).show();
 				}
 			}, false);
 		} else {
@@ -276,7 +293,7 @@ public class OverviewActivity extends AppCompatActivity {
 					}
 				}).start();
 				todoListArrayAdapter.addAll(items);
-				Toast.makeText(OverviewActivity.this, "Local items synchronized", Toast.LENGTH_SHORT).show();
+				Toast.makeText(OverviewActivity.this, getString(R.string.synchronizedLocal), Toast.LENGTH_SHORT).show();
 			});
 		}
 		// prüfe, ob lokale todos vorhanden. 
