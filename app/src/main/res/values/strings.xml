@@ -12,10 +12,28 @@
 	<string name="title_activity_login">Einloggen</string>
 	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 	<string name="contacts">Kontakte</string>
+	<string name="contact">Kontakt</string>
+	<string name="deleted">entfernt.</string>
 	<string name="deleteLocal">Lösche lokal</string>
 	<string name="deleteRemote">Lösche remote</string>
 	<string name="synchronize">Synchronisiere</string>
 	<string name="deleteItem">Eintrag löschen</string>
+	<string name="setItem">Item mit Name </string>
+	<string name="setDone"> als erledigt markiert.</string>
+	<string name="setUndone"> als offen markiert.</string>
+	<string name="setFavorite"> als wichtig markiert.</string>
+	<string name="setNotFavorite"> als nicht wichtig markiert.</string>
+	<string name="itemDeleted">Item gelöscht.</string>
+	<string name="localItemsDeleted">Alle lokalen Items gelöscht.</string>
+	<string name="remoteItemsDeleted">Alle remote Items gelöscht.</string>
+	<string name="synchronizedRemote">Remote Items synchronisiert.</string>
+	<string name="synchronizedLocal">Lokale Items synchronisiert.</string>
+	<string name="serverNotAccessible">Server nicht erreichbar. Lokale CRUD Implementierung wird genutzt.</string>
+	<string name="serverAccessible">Server erreichbar. Remote CRUD Implementierung wird genutzt.</string>
+	<string name="sendMail">Mail wurde erfolgreich an .</string>
+	<string name="sendSMS">SMS wurde erfolgreich an </string>
+	<string name="sendSuccessfully"> gesendet.</string>
+	
 	<!-- Strings related to login -->
 	<string name="prompt_email">E-Mail</string>
 	<string name="prompt_password">Passwort</string>

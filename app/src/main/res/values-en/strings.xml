@@ -26,4 +26,21 @@
 	<string name="synchronize">Synchronize</string>
 	<string name="sureDeleteItem">Are you sure you want to delete this item?</string>
 	<string name="deleteItem">Delete item</string>
+	<string name="setItem">"Set item with name "</string>
+	<string name="setDone">" as done."</string>
+	<string name="setUndone">" as undone."</string>
+	<string name="setFavorite">" as favorite."</string>
+	<string name="setNotFavorite">" as non-favorite."</string>
+	<string name="itemDeleted">Item deleted.</string>
+	<string name="localItemsDeleted">All local items deleted.</string>
+	<string name="synchronizedRemote">Remote items synchronized.</string>
+	<string name="synchronizedLocal">Local items synchronized.</string>
+	<string name="contact">Contact</string>
+	<string name="deleted">deleted.</string>
+	<string name="remoteItemsDeleted">All remote items deleted.</string>
+	<string name="serverNotAccessible">Server not accessible. Use local CRUD implementation</string>
+	<string name="serverAccessible">Server accessible. Use remote CRUD implementation</string>
+	<string name="sendMail">"Mail to "</string>
+	<string name="sendSMS">"SMS to "</string>
+	<string name="sendSuccessfully">" successfully sent."</string>
 </resources>
