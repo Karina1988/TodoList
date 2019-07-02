@@ -231,7 +231,7 @@ public class DetailviewActivity extends AppCompatActivity {
 		this.item.setDescription(todoDescription.getText().toString());
 		this.item.setDone(this.todoDone.isChecked());
 		this.item.setFavourite(this.todoFavourite.isChecked());
-		this.item.setExpiry(myCalendar.getTimeInMillis());
+		this.item.setExpiry(this.item.getExpiry());
 		this.item.setContacts(contacts);
 		
 		if (create) {
