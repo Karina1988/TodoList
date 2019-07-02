@@ -40,7 +40,7 @@
 	<string name="action_sign_in">Einloggen</string>
 	<string name="action_sign_in_short">Einloggen</string>
 	<string name="error_invalid_email">Die E-Mail-Adresse ist ungültig</string>
-	<string name="error_invalid_password">Das Passwort ist zu kurz</string>
+	<string name="error_invalid_password">Das Passwort ist zu kurz oder enthält ungültige Zeichen.</string>
 	<string name="error_incorrect_password">Das Passwort ist falsch.</string>
 	<string name="error_field_required">Dies ist ein Pflichtfeld</string>
 	<string name="sureDeleteItem">Sind Sie sicher, dass Sie den Eintrag löschen möchten?</string>

@@ -306,25 +306,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return crudOperations.authenticateUser(new User(mEmail, mPassword));
-
-//			try {
-//				// Simulate network access.
-//				Thread.sleep(2000);
-//			} catch (InterruptedException e) {
-//				return false;
-//			}
-
-//			for (String credential : DUMMY_CREDENTIALS) {
-//				String[] pieces = credential.split(":");
-//				if (pieces[0].equals(mEmail)) {
-//					// Account exists, return true if the password matches.
-//					return pieces[1].equals(mPassword);
-//				}
-//			}
-
-//			// TODO: register the new account here.
-//			return true;
 		}
 
 		@Override
@@ -339,7 +326,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			} else {
 				mPasswordView.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
-				
 			}
 		}
 
