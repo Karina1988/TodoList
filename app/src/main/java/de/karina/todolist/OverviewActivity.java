@@ -118,11 +118,6 @@ public class OverviewActivity extends AppCompatActivity {
 				String todoDateAsString = df.format(date);
 				todoDate.setText(todoDateAsString);
 				
-				Date currentTime = new Date();
-				if (date.before(currentTime)) {
-					todoTitleView.setTextColor(Color.RED);
-				}
-				
 				//remove listener before setChecked status in order to avoid problems when recycling the view
 				itemReadyView.setOnCheckedChangeListener(null);
 				itemReadyView.setChecked(currentItem.isDone());
@@ -135,7 +130,7 @@ public class OverviewActivity extends AppCompatActivity {
 							if (currentItem.isDone()) {
 								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + " " + getString(R.string.setDone), Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setUndone), Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + " " + getString(R.string.setUndone), Toast.LENGTH_SHORT).show();
 							}
 						});
 					}
@@ -151,9 +146,9 @@ public class OverviewActivity extends AppCompatActivity {
 						updateSortAndFocusItem(null);
 						new UpdateItemTask(OverviewActivity.this.crudOperations).run(currentItem, updated -> {
 							if (currentItem.isFavourite()) {
-								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setFavorite), Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + " " + getString(R.string.setFavorite), Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + getString(R.string.setNotFavorite), Toast.LENGTH_SHORT).show();
+								Toast.makeText(OverviewActivity.this, getString(R.string.setItem) + " " + currentItem.getName() + " " + getString(R.string.setNotFavorite), Toast.LENGTH_SHORT).show();
 							}
 						});
 					}
@@ -207,10 +202,8 @@ public class OverviewActivity extends AppCompatActivity {
 	private void updateSortAndFocusItem(TodoItem item) {
 		if (sortModus == 1) {
 			sortItemsByFavorite();
-			sortItemByDoneStatus();
 		} else if (sortModus == 2) {
 			sortItemsByDate();
-			sortItemByDoneStatus();
 		} else {
 			sortItemByDoneStatus();
 		}
@@ -293,9 +286,6 @@ public class OverviewActivity extends AppCompatActivity {
 				Toast.makeText(OverviewActivity.this, getString(R.string.synchronizedLocal), Toast.LENGTH_SHORT).show();
 			});
 		}
-		// prüfe, ob lokale todos vorhanden. 
-		// wenn ja: lösche alle todos remote und füge die lokalen todos remote hinzu
-		// wenn nein, übertrage alle remote todos auf lokale datenbank
 	}
 	
 	@Override
