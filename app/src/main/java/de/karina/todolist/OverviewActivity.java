@@ -79,9 +79,6 @@ public class OverviewActivity extends AppCompatActivity {
 		});
 		
 		new CheckRemoteAvailableTask().run(available -> {
-//			intent zu loginactivity todo
-//			Intent loginIntent = new Intent(this, LoginActivity.class);
-//			startActivity(loginIntent);
 			
 			TodoItemApplication todoItemApplication = (TodoItemApplication)getApplication();
 			todoItemApplication.setRemoteCRUDMode(available);
@@ -201,7 +198,7 @@ public class OverviewActivity extends AppCompatActivity {
 					}
 				});
 				Toast.makeText(OverviewActivity.this, R.string.itemDeleted, Toast.LENGTH_SHORT).show();
-			}
+			} 
 		} else {
 			updateSortAndFocusItem(null);
 		}
